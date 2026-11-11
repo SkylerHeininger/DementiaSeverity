@@ -306,12 +306,22 @@ def to_tensors(batch):
     return tuple(torch.from_numpy(part) for part in batch)
 
 
-def train_net(sessions, y, train, seed, hide_groups):
+def balanced_weights(y):
+    # Weight each visit by the inverse frequency of its severity band, scaled so the average weight is 1
+    bands = to_band(y)
+    weights = 1.0 / np.bincount(bands, minlength=len(BAND_LABELS))[bands]
+    return (weights / weights.mean()).astype(np.float32)
+
+
+def train_net(sessions, y, train, seed, hide_groups, class_weights=False):
     # Training loop. Should be pretty self-explanatory. Using MSE for loss
     torch.manual_seed(seed)
     rng = np.random.default_rng(seed)
     mean, std = float(y[train].mean()), max(float(y[train].std()), 1e-6)
     target = ((y[train] - mean) / std).astype(np.float32)
+
+    # Every visit counts equally unless class weighting is on
+    weights = balanced_weights(y[train]) if class_weights else np.ones(len(train), dtype=np.float32)
 
     net = SessionCNN()
     optimizer = torch.optim.AdamW(net.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
@@ -327,8 +337,8 @@ def train_net(sessions, y, train, seed, hide_groups):
             pick = order[start:start + BATCH_SIZE]
             batch = to_tensors(batch_arrays(sessions, train[pick], TOKEN_DROPOUT, rng, hide_groups))
 
-            # MSE
-            loss = ((net(*batch) - torch.from_numpy(target[pick])) ** 2).mean()
+            # MSE, with each visit scaled by its weight
+            loss = (((net(*batch) - torch.from_numpy(target[pick])) ** 2) * torch.from_numpy(weights[pick])).mean()
             optimizer.zero_grad()
             loss.backward()
             nn.utils.clip_grad_norm_(net.parameters(), 1.0)
@@ -353,7 +363,7 @@ def predict_net(net, sessions, test, mean, std, hide_groups):
     return np.concatenate(outputs) * std + mean
 
 
-def cross_validate_neural(name, sessions, y, groups, hide_groups, train_ok=None):
+def cross_validate_neural(name, sessions, y, groups, hide_groups, train_ok=None, class_weights=False):
     # Runs the cross validation. Note that we made some pieces for repeating, with different seeds, to help
     # validate results. 
 
@@ -367,7 +377,7 @@ def cross_validate_neural(name, sessions, y, groups, hide_groups, train_ok=None)
             train = train[train_ok[train]]
 
         began = time.time()
-        net, mean, std = train_net(sessions, y, train, SET_SEED, hide_groups)
+        net, mean, std = train_net(sessions, y, train, SET_SEED, hide_groups, class_weights)
         preds[0, test] = predict_net(net, sessions, test, mean, std, hide_groups)
         baseline[0, test] = y[train].mean()
         print(f"{name}: fold {k + 1} of 5, {time.time() - began:.0f}s")
@@ -588,6 +598,7 @@ def main(argv=None):
     ap.add_argument("--timepoints", nargs="+", default=None, help="timepoints to use (e.g. T0 T2 T3, or 'all')")
     ap.add_argument("--blacklist", default=None, help="file of record ids to exclude, one per line")
     ap.add_argument("--train-without-hard", action="store_true", help="train on the sessions that are not dyadic or bilingual, and score the dyadic and bilingual sessions as a separate held-out set")
+    ap.add_argument("--class-weights", action="store_true", help="weight each training visit's loss by the inverse frequency of its severity band (0-18, 19-36, 37-54) in the training folds, for the CNN arms only")
     ap.add_argument("--output-dir", default=".", help="folder for outputs")
     args = ap.parse_args(argv)
     sys.stdout.reconfigure(line_buffering=True)
@@ -621,6 +632,7 @@ def main(argv=None):
     print(f"{len(df)} sessions from {df['record_id'].nunique()} patients, segments per session: min {lengths.min()}, median {int(np.median(lengths))}, max {lengths.max()}")
     print(f"dyadic sessions: {int(dyad.sum())}, bilingual sessions: {int(bilingual.sum())}")
     print(f"headline metrics use {int(eval_mask.sum())} sessions, and the dyadic and bilingual columns score those sessions separately")
+    print(f"class weighting by severity band: {args.class_weights}")
 
     # CV
     print("Running cross-validation:")
@@ -631,9 +643,9 @@ def main(argv=None):
     # Train with and without dialogue acts, to see how much DAs add to the model above speaker roles
     n_params = sum(p.numel() for p in SessionCNN().parameters())
     print(f"cnn: {n_params} parameters")
-    preds, baseline = cross_validate_neural("cnn", sessions, y, groups, False, train_ok)
+    preds, baseline = cross_validate_neural("cnn", sessions, y, groups, False, train_ok, args.class_weights)
     results[CNN] = {"preds": preds, "baseline": baseline}
-    preds, baseline = cross_validate_neural("cnn, dialogue acts hidden", sessions, y, groups, True, train_ok)
+    preds, baseline = cross_validate_neural("cnn, dialogue acts hidden", sessions, y, groups, True, train_ok, args.class_weights)
     results[CNN_SPEAKERS] = {"preds": preds, "baseline": baseline}
 
     # Calculate metrics
