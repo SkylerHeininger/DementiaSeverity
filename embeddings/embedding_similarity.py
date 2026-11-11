@@ -24,15 +24,8 @@ from load_data import get_turn_embeddings, key as visit_key
 from load_data import baseline_visits, load_dataset, load_roles, load_transcript
 
 RNG = np.random.default_rng(0)
-MIN_WORDS = 4   # backchannels aren't substantive turns, same threshold as the rest of this track
+MIN_WORDS = 4
 
-# "orig" is the original, overtly deficit-framed probe wording this track started with.
-# "neutral" is a behaviorally-descriptive rewording (the topic/activity, not a deficit),
-# written BEFORE this file's loader was ever wired to real data or any --stats run had
-# produced a single probe-vs-subscore correlation -- wording only, no DSRS feedback loop.
-# Rule going forward: --stats output is read-only diagnostics. It is never grounds to
-# revise either probe set's wording; a wording change is a separate, explicit decision.
-# Both sets are always computed; PROBE_SETS is what selects between them downstream.
 PROBES_ORIG = {
     "memory_score": "forgets recent events, repeats the same questions, cannot remember things",
     "speech_language_score": "trouble finding words, hard to follow a conversation",
@@ -59,7 +52,7 @@ PROBES_NEUTRAL = {
 }
 PROBE_SETS = {"orig": PROBES_ORIG, "neutral": PROBES_NEUTRAL}
 
-# === Shared loading ===
+### Shared loading
 def unit(v):
     return v / (np.linalg.norm(v, axis=-1, keepdims=True) + 1e-12)
 
@@ -95,21 +88,11 @@ def visit_probe_scores(emb, probe_embs):
     return feats
 
 # Length-controlled and per-speaker probe features.
-# probe_{set}_{k} (above) is the MAX similarity over a visit's turns, so a longer visit gets more
-# draws and a higher max by chance alone. The rate versions instead count the SHARE of turns that
-# "hit" a probe: similarity at or above that probe's corpus-wide percentile over every substantive
-# turn of every visit. The threshold uses no DSRS information, so it can't leak the outcome.
-#   prate_{set}_{k}          share of all substantive turns hitting probe k   (replaces the max)
-#   prole_{set}_{role}_any   share of that role's substantive turns hitting ANY probe
-#                            -> who raises the symptom topics: patient, caregiver or provider
-# New prefixes on purpose: the existing probe_* features and every result built on them are unchanged.
 PROBE_HIT_PERCENTILE = 95
 PROBE_ROLES = ("patient", "caregiver", "provider")
 
+# Compute corpus-wide probe hit thresholds
 def probe_thresholds(visits, probe_embs, pct=PROBE_HIT_PERCENTILE):
-    """Per set: per-probe hit thresholds, plus an 'any probe' threshold on each turn's best
-    z-scored probe match. Taking any of 10 per-probe hits would flag ~10x more turns than one
-    probe does (mostly noise), so the any-probe hit is set at the same percentile of the BEST match."""
     out = {}
     for set_name, P in probe_embs.items():
         sims = np.vstack([v["emb"] @ P.T for v in visits.values() if len(v["emb"])])
@@ -159,7 +142,6 @@ def build_feature_table(idx, visits, probe_embs):
     print()
     return pd.DataFrame(rows)
 
-
 # Exploratory corpus-level stats (--stats)
 def within_vs_between(S, labels):
     iu = np.triu_indices(len(labels), 1)
@@ -176,7 +158,7 @@ def mantel(S, y, groups, n_perm=2000):
     null = []
     for _ in range(n_perm):
         remap = dict(zip(uniq, RNG.permutation(uniq)))
-        y_perm = y.copy()   # shuffle scores between patients, keeping each patient's visits together
+        y_perm = y.copy()
         for g, h in remap.items():
             src, dst = np.where(groups == h)[0], np.where(groups == g)[0]
             k = min(len(src), len(dst))
@@ -251,8 +233,8 @@ def run_stats(idx, visits, df):
             if k in idx:
                 print(f"  {k:24s}", rho(df[f"probe_{set_name}_{k}"], idx[k].to_numpy(float)))
 
+# Visit length and speaker checks on the probe features
 def probe_checks(idx, df):
-    """Visit length and speaker checks on the probe features (prints only)."""
     from reply_relevance import partial_rho
     d = idx[["visit_id", "record_id_clean", "timepoint", "total_score"]].merge(df, on="visit_id")
     first = baseline_visits(d)

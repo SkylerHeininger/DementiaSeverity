@@ -2,36 +2,12 @@
 Forrest Leung
 11/11/26
 
-H3 (semantics): patient turns become less semantically relevant to the provider turn they
-answer as severity increases.
-
-For every substantive patient or caregiver reply that directly follows a provider turn:
-  raw    = cosine(reply, the provider turn it answers)
-  excess = raw - mean cosine(reply, every OTHER provider prompt in the same visit)
-"excess" is the main feature. Subtracting the reply's similarity to the rest of the provider's
-talk removes whatever is shared by the whole visit (its overall topics, the speaker's style,
-how "generic" the reply is), so what is left is how much the reply is about THIS prompt.
-It is the exact expectation of a within-visit shuffle of provider turns, so no RNG is needed.
-
-Caregiver replies get the same features as a control: if caregiver relevance also falls with
-severity, the effect is about what severe visits discuss, not about the patient's cognition.
-
-Two prompt subsets:
-  _all = every provider block that is substantive (>= MIN_WORDS) or ends in a question
-  _q   = only provider blocks whose last dialogue act (Skyler's DASeg output) is a question;
-         answers to questions are where relevance is best defined. NaN if no DASeg file.
-
-Only columns starting with "reply_" are model features (predict_dsrs.py's reply_relevance group).
-Reply counts (n_reply_*) are written for diagnostics but kept out of the model, since they mostly
-measure how much the patient talks, which is the talk-time baseline's job.
-
-Embedding caches are per model: the .npz cache is keyed by visit only, so pointing a different
-model at an existing cache would silently reuse the old vectors. A MODEL.txt sidecar guards this.
+Compute reply relevance features for each visit based on the embeddings of provider and patient/caregiver turns.
 
 To run (once per embedding model):
 python embeddings/reply_relevance.py "$DATA"
 python embeddings/reply_relevance.py "$DATA" --model sentence-transformers/all-mpnet-base-v2
-python embeddings/reply_relevance.py "$DATA" --stats      (prints the H3 correlations)
+python embeddings/reply_relevance.py "$DATA" --stats
 """
 import argparse
 import glob
@@ -50,32 +26,26 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_DASEG_DIR = os.path.join(HERE, "..", "predict_severity", "VCs1_All_Transcriptions_daseg")
 DASEG_SUFFIX = "_with_predictions"
 
-MIN_WORDS = 4          # same substantive-turn threshold as the rest of this track
-MIN_REPLIES = 3        # fewer replies than this -> the visit's mean is too noisy, NaN
-MIN_POOL = 2           # need at least this many OTHER provider prompts for the excess baseline
+MIN_WORDS = 4
+MIN_REPLIES = 3
+MIN_POOL = 2
 RESPONDER_ROLES = ("patient", "caregiver")
 SUBSETS = ("all", "q")
 
-# Same members as EXTENDED_DA_GROUPS["questions"] in predict_severity/predict_session_level_da.py
 QUESTION_DAS = {
     "Wh-Question", "Yes-No-Question", "Open-Question", "Or-Clause",
     "Declarative-Yes-No-Question", "Rhetorical-Questions",
     "Tag-Question", "Declarative-Wh-Question",
 }
 
-
 def unit(v):
     return v / (np.linalg.norm(v, axis=-1, keepdims=True) + 1e-12)
-
 
 def model_slug(model_name):
     return re.sub(r"[^a-z0-9]+", "_", model_name.split("/")[-1].lower()).strip("_")
 
-
-# ---------- embedding cache per model ----------
+# Resolve the cache directory for a given model, ensuring it matches the expected model.
 def resolve_cache_dir(model_name, cache_dir=None):
-    """Default cache: the existing BioLORD cache for EMBED_MODEL, a separate folder otherwise.
-    Refuses to reuse a cache that holds another model's embeddings."""
     if cache_dir is None:
         name = "turn_embeddings" if model_name == EMBED_MODEL else f"turn_embeddings_{model_slug(model_name)}"
         cache_dir = os.path.join(HERE, "outputs", name)
@@ -91,25 +61,21 @@ def resolve_cache_dir(model_name, cache_dir=None):
     if has_npz and model_name != EMBED_MODEL:
         raise SystemExit(f"{cache_dir} already has embeddings from an unrecorded model (no MODEL.txt); "
                          f"pass an empty --embeddings-cache for {model_name!r}")
-    os.makedirs(cache_dir, exist_ok=True)   # legacy cache with no sidecar = the default BioLORD model
+    os.makedirs(cache_dir, exist_ok=True)
     with open(sidecar, "w") as f:
         f.write(model_name + "\n")
     return cache_dir
 
-
-# ---------- DASeg questions ----------
+# Index DASeg files by visit key.
 def daseg_index(daseg_dir):
-    """{visit_key: path} for Skyler's <transcript stem>_with_predictions.csv files."""
     out = {}
     for p in glob.glob(os.path.join(daseg_dir, f"*{DASEG_SUFFIX}.csv")):
         stem = os.path.splitext(os.path.basename(p))[0]
         out[visit_key(stem[: -len(DASEG_SUFFIX)])] = p
     return out
 
-
+# Identify turn indices whose last dialogue act is a question.
 def question_turns(daseg_csv):
-    """turn_index values whose LAST dialogue act is a question, or None if the file is unusable.
-    DASeg rows are words; every word row keeps its transcript turn_index."""
     try:
         d = pd.read_csv(daseg_csv, dtype=str, keep_default_na=False)
     except Exception:
@@ -123,11 +89,8 @@ def question_turns(daseg_csv):
     last_da = d.groupby("turn_index", sort=False)["da"].last()
     return {int(t) for t in last_da.index[last_da.isin(QUESTION_DAS)]}
 
-
-# ---------- features ----------
+# Merge consecutive rows by speaker into weighted blocks.
 def merge_blocks(t, emb):
-    """Consecutive rows by the same speaker -> one block (transcription often splits a turn).
-    Block embedding = word-count-weighted mean of its row embeddings, re-normalized."""
     block_id = (t["speaker"] != t["speaker"].shift()).cumsum().to_numpy()
     words = t["word_count"].to_numpy(float)
     blocks = []
@@ -139,9 +102,8 @@ def merge_blocks(t, emb):
                        "last_turn": int(t["turn_index"].iat[rows[-1]]), "emb": unit(v)})
     return blocks
 
-
+# Build reply records for provider prompts followed by responder blocks.
 def reply_records(blocks, questions=None):
-    """One record per (provider prompt -> patient/caregiver reply) pair."""
     def ends_in_question(b):
         return questions is not None and b["last_turn"] in questions
 
@@ -169,28 +131,24 @@ def reply_records(blocks, questions=None):
         })
     return recs
 
-
+# Summarize reply features by responder role and question subset.
 def visit_features(recs, have_questions):
     rec = pd.DataFrame(recs, columns=["role", "raw", "excess", "is_q"])
     feats = {}
     for subset in SUBSETS:
-        sub = rec if subset == "all" else rec[rec["is_q"].astype(bool)]   # astype: an empty object column would index columns
+        sub = rec if subset == "all" else rec[rec["is_q"].astype(bool)]
         for role in RESPONDER_ROLES:
             r = sub[sub["role"] == role].dropna(subset=["excess"])
             usable = len(r) >= MIN_REPLIES and (subset == "all" or have_questions)
             feats[f"n_reply_{role}_{subset}"] = len(r) if (subset == "all" or have_questions) else np.nan
             feats[f"reply_{role}_raw_{subset}"] = float(r["raw"].mean()) if usable else np.nan
             feats[f"reply_{role}_excess_{subset}"] = float(r["excess"].mean()) if usable else np.nan
-            # share of replies no closer to their own prompt than to the average provider prompt:
-            # the numeric version of "often off-topic replies"
             feats[f"reply_{role}_offtarget_{subset}"] = float((r["excess"] <= 0).mean()) if usable else np.nan
-        # within-visit contrast: cancels anything that hits both responders equally
         feats[f"reply_patient_minus_caregiver_excess_{subset}"] = (
             feats[f"reply_patient_excess_{subset}"] - feats[f"reply_caregiver_excess_{subset}"])
     return feats
 
-
-# ---------- H3 test ----------
+# Report Spearman correlation and p-value, or a note when too few observations are available for H3.
 def rho(a, b):
     a, b = np.asarray(a, float), np.asarray(b, float)
     ok = ~np.isnan(a) & ~np.isnan(b)
@@ -199,10 +157,8 @@ def rho(a, b):
     r = spearmanr(a[ok], b[ok])
     return f"rho={r.correlation:+.3f} p={r.pvalue:.3g} n={ok.sum()}"
 
-
+# Report Spearman partial correlation and p-value, or a note when too few observations are available for H3.
 def partial_rho(x, y, Z):
-    """Spearman partial correlation of x and y controlling for the columns of Z:
-    rank everything, regress the ranks of x and y on the ranks of Z, correlate the residuals."""
     x, y = np.asarray(x, float), np.asarray(y, float)
     Z = np.asarray(Z, float).reshape(len(x), -1)
     ok = ~np.isnan(x) & ~np.isnan(y) & ~np.isnan(Z).any(axis=1)
@@ -217,12 +173,10 @@ def partial_rho(x, y, Z):
     p = 2 * student_t.sf(abs(r) * np.sqrt(dof / max(1 - r ** 2, 1e-12)), dof)
     return f"rho={r:+.3f} p={p:.3g} n={n}"
 
-
 # The handful of features the checks focus on
 KEY_FEATURES = [f"reply_{who}_excess_{s}" for s in SUBSETS for who in ("patient", "caregiver")] + \
                [f"reply_patient_minus_caregiver_excess_{s}" for s in SUBSETS]
 TALK_CONTROLS = [f"ctl_share_{r}" for r in RESPONDER_ROLES]
-
 
 def run_stats(idx, df):
     d = idx[["visit_id", "record_id_clean", "site", "timepoint", "total_score"]].merge(df, on="visit_id")
@@ -268,7 +222,6 @@ def run_stats(idx, df):
     print("\nThese are exploratory tests: about 30 correlations in the main table alone, so treat")
     print("p values near .05 as leads; the cross-validated ablation in predict_dsrs.py is the real test.")
 
-
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("data_dir")
@@ -294,7 +247,7 @@ def main():
     for i, row in idx.iterrows():
         t = load_transcript(row["path"], roles)
         emb, _ = get_turn_embeddings(row["path"], roles, cache_dir, model)
-        if len(emb) != len(t):   # cache built from a different parse of this transcript
+        if len(emb) != len(t):
             misaligned += 1
             continue
         questions = question_turns(das[row["visit_id"]]) if row["visit_id"] in das else None
@@ -302,8 +255,6 @@ def main():
         feats = visit_features(reply_records(blocks, questions), questions is not None)
         feats.update({"visit_id": row["visit_id"], "daseg_available": int(questions is not None),
                       "embed_model": args.model})
-        # talk-time controls for --stats. Named ctl_share_* (not *_turn_share) so predict_dsrs.py
-        # never picks them up as features when this file is joined in.
         for r in RESPONDER_ROLES:
             feats[f"ctl_share_{r}"] = sum(b["role"] == r for b in blocks) / max(len(blocks), 1)
         rows.append(feats)
@@ -321,7 +272,6 @@ def main():
 
     if args.stats:
         run_stats(idx, df)
-
 
 if __name__ == "__main__":
     main()

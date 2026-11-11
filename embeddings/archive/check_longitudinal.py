@@ -17,7 +17,7 @@ paths = sys.argv[1:] or sys.exit("usage: python check_longitudinal.py <severity 
 frames = []
 for p in paths:
     if Path(p).name.startswith("~$"):
-        continue  # Excel lock file left behind while a workbook is open
+        continue
     if Path(p).suffix.lower() in {".xlsx", ".xls"}:
         f = pd.read_excel(p)  # first sheet
     else:
@@ -29,7 +29,7 @@ print("rows per file:")
 print(df["source_file"].value_counts().sort_index(), "\n")
 pid, ev = "record_id_clean", "Event Name"
 if ev not in df or df[ev].isna().all():
-    ev = "source_file"   # fall back to the file name as the timepoint
+    ev = "source_file"
 
 scored = df.dropna(subset=["total_score"])
 usable = scored.dropna(subset=["matched_transcript"])

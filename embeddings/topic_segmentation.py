@@ -8,9 +8,9 @@ selects boundaries based on a threshold and local maxima criteria.
 """
 import numpy as np
 
-CONTEXT_K = 3          # turns on each side of a gap used for the similarity window
-CUTOFF_SIGMA = 1.0     # boundary threshold = mean(depth) + CUTOFF_SIGMA * std(depth)
-MIN_GAP_TURNS = 2      # suppress a second boundary within this many substantive turns
+CONTEXT_K = 3
+CUTOFF_SIGMA = 1.0
+MIN_GAP_TURNS = 2
 
 # Constants for the topic segmentation algorithm
 def similarity_curve(E, k=CONTEXT_K):
