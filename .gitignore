@@ -1,8 +1,12 @@
 *.csv
+*.xlsx
 *.png
 *.json
 *.txt
+*.npz
+*.npy
 *output/
+outputs/
 .DS_Store
 speaker_roles/__pychache__/
 speaking_time.cpython-314.pyc
@@ -17,3 +21,6 @@ patient_change_over_time.py
 speaker_predict_out.py
 predict_da_cnn.py
 speaker_roles/
+
+.claude/
+__pycache__/
