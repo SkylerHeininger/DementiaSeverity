@@ -1,0 +1,76 @@
+turn,role,speaker,text,timestamp_seconds,end_seconds
+0,provider,Dr. Patel,"Good morning, Dorothy, Karen. How have things been since we last saw you?",0.22,5.52
+1,patient,Dorothy Whitaker,Oh yes.,12.42,14.05
+2,provider,Dr. Patel,"Karen, can you tell me about her bathing and dressing routine these days?",14.93,20.23
+3,caregiver,Karen Whitaker,"She needs help with everything now—bath, getting dressed, shoes. I do it every morning, sometimes she resists, but we get her clean.",20.93,29.69
+4,provider,Dr. Patel,And how's her eating? Any appetite changes?,30.34,33.33
+5,caregiver,Karen Whitaker,"She eats a little, mostly toast and soup. She forgets to finish meals, sometimes just pushes the plate away.",34.07,41.67
+6,provider,Dr. Patel,What about nighttime? You mentioned restlessness?,42.26,44.87
+7,caregiver,Karen Whitaker,"She gets up a lot, wanders the hall, I have to sit with her until she calms down. It's exhausting.",45.68,53.67
+8,provider,Dr. Patel,"Okay, Karen, have you been able to keep up with the medication schedule?",54.31,59.61
+9,caregiver,Karen Whitaker,"I try, but sometimes she forgets the pills, I have to sort them out each morning.",60.17,66.62
+10,provider,Dr. Patel,"Do you have any support at home—family, visiting nurse, respite?",67.4,71.55
+11,caregiver,Karen Whitaker,"No, just me. My sister lives out of state, and the home health hasn't been consistent.",72.47,78.92
+12,provider,Dr. Patel,We could arrange a daytime program or a caregiver break; would that help?,79.77,85.07
+13,caregiver,Karen Whitaker,"That would be a huge relief, yes, I need some time.",85.61,90.14
+14,provider,Dr. Patel,"Dorothy, sweetheart, you’ve been doing a good job, thank you.",90.44,94.59
+15,patient,Dorothy Whitaker,Thank you.,101.57,103.21
+16,provider,Dr. Patel,Do you feel you have enough help with her bathing and dressing each day?,104.2,109.89
+17,caregiver,Karen Whitaker,"Barely—she needs me for everything, I literally lift her out of the tub.",110.26,115.56
+18,provider,Dr. Patel,Would a home‑health aide come in a couple of hours a day make a difference?,116.26,122.33
+19,caregiver,Karen Whitaker,"Yes, that would be huge, but I’m not sure how to get one.",122.67,127.97
+20,provider,Dr. Patel,"I can arrange a referral to the agency that provides aides, and we’ll follow‑up in two weeks.",128.68,135.52
+21,caregiver,Karen Whitaker,"Okay, thank you. I just want a break, even an hour.",136.3,140.83
+22,provider,Dr. Patel,"Also, let’s review her meds; we can simplify the regimen to reduce the pill‑sorting.",141.77,147.46
+23,caregiver,Karen Whitaker,"Please, that would help a lot; she gets confused with the different bottles.",148.28,153.58
+24,provider,Dr. Patel,"We'll set up an aide for two hours a day, starting next week, and I’ll give you the contact info before you leave.",153.98,163.13
+25,caregiver,Karen Whitaker,"Great, that would really lift some weight off me.",163.61,167.37
+26,provider,Dr. Patel,"About the meds, we can drop the nighttime antihistamine and keep just the cholinesterase inhibitor, and put them in a pill organizer.",168.25,177.01
+27,caregiver,Karen Whitaker,"Okay, I’ll get a weekly dispenser; she’ll still mix them up sometimes.",177.97,182.89
+28,provider,Dr. Patel,"For the night restlessness, have you tried a low‑dose melatonin or a bedtime routine with soft music?",183.23,190.07
+29,caregiver,Karen Whitaker,"We tried music, but she still paces; I haven’t used melatonin yet.",191.0,195.91
+30,provider,Dr. Patel,"I’ll write a prescription for melatonin 3 mg to try at bedtime, and we’ll monitor how she sleeps.",196.74,203.97
+31,caregiver,Karen Whitaker,"Thank you, I’ll give that a try and let you know.",204.31,208.84
+32,provider,Dr. Patel,We’ll need to check how the bathing routine is going and whether you’ve noticed any skin irritation.,209.39,216.23
+33,caregiver,Karen Whitaker,"I help her shower every morning; skin is mostly okay, just a little redness on her back sometimes.",216.7,223.93
+34,provider,Dr. Patel,How about continence—any leaks or nighttime accidents?,224.24,227.23
+35,caregiver,Karen Whitaker,"Yeah, she has a few episodes at night, we use pads and change her in the morning.",227.62,234.45
+36,provider,Dr. Patel,Have you seen her get up and wander around the house after lights out?,234.8,240.49
+37,caregiver,Karen Whitaker,"She does pace the hallway, sometimes ends up in the kitchen; I have to find her.",240.81,247.27
+38,provider,Dr. Patel,"I’d recommend a low nightlight and maybe a door alarm, and I can arrange a home‑health safety check.",248.21,255.43
+39,caregiver,Karen Whitaker,"That would help, thank you—I'm really exhausted; also, are there any caregiver support groups nearby?",256.0,262.06
+40,provider,Dr. Patel,"Sure, there’s a caregiver support group at the senior center on Wednesdays at 10 a.m.; I can give you the flyer.",262.45,270.83
+41,caregiver,Karen Whitaker,"Okay, that sounds good… I’ve never been, but maybe it’ll help.",271.79,276.32
+42,provider,Dr. Patel,I’ll also put you in touch with the Alzheimer’s Association chapter; they have a weekly phone‑check‑in you can join if transportation is tough.,277.13,286.28
+43,caregiver,Karen Whitaker,"Phone check‑in would be easier, yes… thank you.",286.94,290.32
+44,provider,Dr. Patel,How’s her appetite? Any trouble getting her to finish meals?,290.62,294.77
+45,caregiver,Karen Whitaker,"She’ll eat a bite or two, then stops; I’ve been giving her smoothies, but she still refuses most of it.",295.48,303.47
+46,provider,Dr. Patel,"Okay, we can try a high‑calorie supplement; I’ll prescribe a sip‑on‑go that’s easier to take.",304.33,310.4
+47,caregiver,Karen Whitaker,"Alright, I’ll try that… and thank you, Dr. Patel.",310.87,314.63
+48,provider,Dr. Patel,Do you notice any falls or near‑falls in the past month?,315.61,320.14
+49,caregiver,Karen Whitaker,"No, not really, she’s steady in the shower with my help, but I’m scared she might slip.",320.45,327.28
+50,provider,Dr. Patel,"Dorothy, how’s your sleep?",328.24,330.08
+51,patient,Dorothy Whitaker,Okay.,336.03,337.0
+52,provider,Dr. Patel,We’ll arrange a PT consult for gait safety and a home‑health aide for evenings; does that sound okay?,337.82,345.05
+53,caregiver,Karen Whitaker,"Yes, that would be a relief, I’m just… exhausted, so any extra help is welcome.",345.55,351.62
+54,provider,Dr. Patel,"I’ll also give you a list of local respite programs—some offer a few hours a day, so you can rest.",352.26,360.25
+55,caregiver,Karen Whitaker,"Thank you, I’ll look at those; maybe I can finally get a break.",360.77,366.07
+56,provider,Dr. Patel,I’d like to go over her medication list—are you able to give her pills on schedule?,366.75,373.21
+57,caregiver,Karen Whitaker,"I try, but she sometimes forgets, and I’m not always sure I’ve got the timing right.",373.93,380.38
+58,provider,Dr. Patel,How’s her sleep besides the restlessness—does she get up often at night?,380.71,385.63
+59,caregiver,Karen Whitaker,"Yeah, she gets up around two, tries to go to the bathroom, we have a night‑light but she still wanders a bit.",386.12,394.88
+60,provider,Dr. Patel,We could try a low‑dose melatonin and maybe a gentle bedside alarm to alert you if she gets up.,395.46,403.07
+61,caregiver,Karen Whitaker,"Okay, I’ll give that a shot, but I’m nervous about any side effects.",403.8,409.1
+62,provider,Dr. Patel,"Any other concerns—how’s her appetite, mood lately?",409.51,412.5
+63,caregiver,Karen Whitaker,"She’s eating less, but I don’t think she’s depressed, just seems… confused.",413.47,418.39
+64,provider,Dr. Patel,How's her fluid intake during the day—does she drink enough water?,418.75,423.28
+65,caregiver,Karen Whitaker,"She drinks a cup or two, but often forgets; I have to remind her.",424.06,429.75
+66,provider,Dr. Patel,"About bathing—does she need full assistance, or can she do anything on her own?",430.64,436.32
+67,caregiver,Karen Whitaker,Mostly full help; she gets upset if I try to let her wash herself.,436.64,442.32
+68,provider,Dr. Patel,We could arrange a part‑time home aide to help with those tasks and give you some relief.,443.17,450.01
+69,caregiver,Karen Whitaker,"That would be good, as long as I can still be there for her.",450.98,456.66
+70,provider,Dr. Patel,Do you have any other questions or concerns about the plan?,457.32,461.85
+71,caregiver,Karen Whitaker,Just—maybe a little more info on the respite options you mentioned earlier.,462.7,467.62
+72,provider,Dr. Patel,"Sure, there are a few agencies that do daytime respite—some offer a few hours a week, others full days, and they can work around your schedule; I’ll give you their contact cards before you leave.",468.26,482.02
+73,caregiver,Karen Whitaker,"Okay, that sounds helpful…thank you. Do they also arrange transportation?",482.55,486.69
+74,provider,Dr. Patel,"Yes, they can set up transport if needed, and we’ll schedule a follow‑up in six weeks to see how things are going; take care, and Dorothy, you’re doing great—goodbye.",487.61,499.06

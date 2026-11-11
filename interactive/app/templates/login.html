@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Log in - HealthPAL{% endblock %}
+{% block header %}{% endblock %}
+{% block body %}
+<main class="center-page">
+  <section class="card card-pad login-card">
+    <a class="link" href="{{ url_for('home') }}">Back to HealthPAL Homepage</a>
+    <h1 class="page-title login-title">Log in</h1>
+    <p class="muted-text">Continue with your HealthPAL account.</p>
+    <a class="btn btn-block" href="{{ url_for('clinician') }}">Continue</a>
+    <p class="fine-print">This is a demo, no credentials are needed.</p>
+  </section>
+</main>
+{% endblock %}

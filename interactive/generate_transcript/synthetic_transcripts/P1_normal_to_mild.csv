@@ -1,0 +1,88 @@
+turn,role,speaker,text,timestamp_seconds,end_seconds
+0,provider,Dr. Patel,"Good morning, Margaret, Tom. How have things been since our last visit?",0.38,5.3
+1,caregiver,Tom Ellis,"We're doing alright, just the usual; she’s been keeping busy, though we did miss that one appointment.",5.98,12.82
+2,provider,Dr. Patel,"Margaret, can you tell me if you’ve noticed any changes with your memory or daily routines?",13.69,20.14
+3,patient,Margaret Ellis,"I’ve been putting my keys in the wrong drawer a few times, and the other day I blanked on Mrs. Jensen’s name for a second.",21.39,32.11
+4,provider,Dr. Patel,Have you had any other moments—like forgetting where you placed things or missing plans?,33.08,38.77
+5,patient,Margaret Ellis,"I missed the community‑center class once because I thought it was next week, and I felt pretty embarrassed about that.",40.09,48.73
+6,provider,Dr. Patel,"Would you say those lapses are happening more often, or are they still occasional?",49.44,55.12
+7,patient,Margaret Ellis,"They’re still occasional; most days are fine, but every now and then I have to pause and think, and Tom helps me retrace steps.",56.26,66.56
+8,provider,Dr. Patel,Do these lapses ever make you feel worried or affect your confidence?,67.27,72.19
+9,patient,Margaret Ellis,"I do feel a bit uneasy sometimes, especially when I can’t find my glasses, but I try to stay calm.",73.25,81.88
+10,provider,Dr. Patel,"Tom, have you noticed any changes in how she manages things at home?",82.59,87.89
+11,caregiver,Tom Ellis,"She’s still cooking and gardening, just that I double‑check the stove and keep a reminder list for appointments.",88.39,95.61
+12,provider,Dr. Patel,"Margaret, have you been taking your memory medication regularly?",96.04,99.81
+13,patient,Margaret Ellis,"Yes, every morning with breakfast, though I sometimes have to let Tom remind me.",100.63,106.76
+14,provider,Dr. Patel,And how’s your mood overall? Any signs of frustration or sadness?,107.49,112.02
+15,patient,Margaret Ellis,"Mostly okay, but I did feel a little down after missing that class, but it passed quickly.",113.41,120.79
+16,provider,Dr. Patel,Do you use any tricks—like putting things in the same spot or using a notebook—to help with the misplacing?,121.43,129.04
+17,patient,Margaret Ellis,"I try to leave my keys on the kitchen hook, but sometimes I still forget and end up checking the couch.",129.74,138.79
+18,provider,Dr. Patel,"Tom, have you found any particular reminders or cues that seem to work best for Margaret?",139.62,146.08
+19,caregiver,Tom Ellis,"The list on the fridge helps, and I set alarms on my phone for the bigger appointments.",146.99,153.83
+20,provider,Dr. Patel,How are you feeling about the memory medication—any side effects or concerns?,154.78,159.69
+21,patient,Margaret Ellis,"No side effects I’ve noticed, just the occasional stomach upset if I take it on an empty stomach.",161.3,169.1
+22,provider,Dr. Patel,"Is there anything else worrying you, maybe about driving or handling money?",170.03,174.95
+23,patient,Margaret Ellis,"I’m a bit nervous about driving at night, but I haven’t had any problems yet.",176.65,183.2
+24,provider,Dr. Patel,"Tom, have you noticed any changes in how Margaret handles tasks like paying bills or cooking?",183.88,190.34
+25,caregiver,Tom Ellis,"She still does the bills herself, but I see her double‑checking numbers more often now.",190.91,196.98
+26,provider,Dr. Patel,"Margaret, you said you occasionally forget a friend's name—how frequently does that happen?",197.77,203.07
+27,patient,Margaret Ellis,"Maybe once or twice a week, I just pause, then it usually comes back or I ask again.",204.0,211.8
+28,provider,Dr. Patel,"When you hit that blank, do you use any tricks, like thinking of where you met them?",212.67,219.51
+29,patient,Margaret Ellis,"I try to picture the garden we tended together, and the name usually pops up.",221.13,227.68
+30,provider,Dr. Patel,"Tom, are you comfortable with her driving at night, or have you considered shifting her trips to daylight?",228.61,235.83
+31,caregiver,Tom Ellis,"We've started to schedule errands earlier in the day, so she's not out after dark.",236.54,242.61
+32,provider,Dr. Patel,"Tom, have you noticed her missing any doses of her medication or forgetting appointments lately?",243.58,249.65
+33,caregiver,Tom Ellis,"We missed one doctor visit a couple of weeks back, but she’s been taking all her pills as prescribed.",250.35,257.96
+34,provider,Dr. Patel,Do you feel you have enough help at home for grocery shopping and meals?,258.58,264.26
+35,caregiver,Tom Ellis,"Yes, the neighbor helps sometimes and the senior center does a weekly food delivery, so it’s okay.",265.02,271.86
+36,provider,Dr. Patel,Any concerns about her getting up at night—like trips to the bathroom or potential falls?,272.86,278.93
+37,caregiver,Tom Ellis,She uses the nightlight and I keep the hallway clear; no falls so far.,279.87,285.55
+38,provider,Dr. Patel,"Margaret, would you be willing to try a small notebook or phone reminders for appointments and names?",286.41,293.25
+39,patient,Margaret Ellis,"That sounds fine—I already have a list on the fridge, but a notebook could be useful.",293.95,300.91
+40,provider,Dr. Patel,"Tom, have you noticed any changes in Margaret’s mood or anxiety lately?",301.64,306.56
+41,caregiver,Tom Ellis,"She’s a bit more frustrated when she can’t find things, but otherwise okay.",307.2,312.5
+42,provider,Dr. Patel,Do you think a weekly check‑in call from the clinic would be helpful?,313.24,318.54
+43,caregiver,Tom Ellis,"That could be good, especially if she forgets the appointment itself.",319.43,323.96
+44,provider,Dr. Patel,Would you be open to a home safety evaluation from our occupational therapist?,324.43,329.73
+45,caregiver,Tom Ellis,"Yes, we’d welcome that—maybe they can suggest some cues for the freezer.",330.54,335.46
+46,provider,Dr. Patel,"Margaret, does using a notebook feel doable for you, or would you prefer a simple phone alarm?",335.84,342.68
+47,patient,Margaret Ellis,"I think the notebook’s fine, but a gentle alarm for the appointments might be nice, too.",343.54,350.51
+48,provider,Dr. Patel,Do you think you’ll be able to look at the notebook each morning and before you leave the house?,351.37,358.97
+49,patient,Margaret Ellis,"I can try; I usually glance at the fridge list, so adding a quick check in the morning shouldn’t be too hard.",359.97,369.44
+50,provider,Dr. Patel,You mentioned missing an appointment last month—what happened there?,370.31,374.07
+51,patient,Margaret Ellis,"I completely forgot the time; I was in the garden and when I went inside I didn’t see the reminder, so I just went home and missed it.",374.79,386.76
+52,provider,Dr. Patel,"Are there any other places at home where you feel you might be at risk, like the bathroom or stairs?",387.16,395.15
+53,patient,Margaret Ellis,"The bathroom grab bars are fine, but I sometimes forget to turn the stove off if I’m distracted.",396.59,404.39
+54,provider,Dr. Patel,"Tom, would you feel comfortable reminding Margaret to check the notebook and set the phone alarm each day?",404.72,411.95
+55,caregiver,Tom Ellis,"Yes, I can do that—I'll put the notebook on the nightstand so we both see it before bed.",412.65,419.87
+56,provider,Dr. Patel,"Tom, do you notice any patterns when Margaret forgets things, like time of day or certain activities?",420.81,427.65
+57,caregiver,Tom Ellis,"Mostly in the afternoon, after lunch—she gets a bit spaced out.",428.32,432.85
+58,provider,Dr. Patel,"Margaret, would you be open to using a hallway clock that flashes when it’s time to leave for appointments?",433.63,441.24
+59,patient,Margaret Ellis,"Sure, I think that could help—if I see the light I’ll remember.",441.87,447.17
+60,provider,Dr. Patel,"Tom, have you had any concerns about safety with the stove or other appliances recently?",447.91,453.98
+61,caregiver,Tom Ellis,Just the one time she left the burner on; we’ve started a double‑check routine now.,454.71,460.78
+62,provider,Dr. Patel,"Margaret, how are you feeling about the support you have at home?",461.48,466.39
+63,patient,Margaret Ellis,"I feel lucky—Tom’s there, and the notebook helps, even if I still feel a little embarrassed sometimes.",467.46,474.85
+64,provider,Dr. Patel,"Tom, have you noticed whether Margaret's taking her meds on schedule, or does the notebook help with that too?",475.41,483.01
+65,caregiver,Tom Ellis,"Mostly yes, the pillbox and notebook together keep her on track; I just double‑check before bedtime.",484.0,490.45
+66,provider,Dr. Patel,"Margaret, you mentioned missing an appointment—how did that happen, and did you notice anything before?",490.78,496.85
+67,patient,Margaret Ellis,"I think I just got distracted after lunch, I was looking for my glasses and forgot I had the 2 p.m. with the cardiologist.",497.47,507.77
+68,provider,Dr. Patel,"Do you feel the flashing clock and notebook are enough, or would you like another reminder, like a phone alert?",508.75,516.74
+69,patient,Margaret Ellis,"The clock's good, but a gentle phone buzz would be nice, especially if I'm in another room.",517.56,524.94
+70,provider,Dr. Patel,"Tom, any worries about Margaret driving, or would you prefer we discuss a safety plan soon?",525.33,531.79
+71,caregiver,Tom Ellis,"We're still comfortable with her driving short trips, but we’ve started planning for a review next month.",532.23,539.07
+72,provider,Dr. Patel,"Margaret, can you tell me about the times you’ve misplaced things like your keys or had a moment where a friend's name just slipped away?",539.93,549.85
+73,patient,Margaret Ellis,"Sure, I’ll admit it’s happened a few times—like last week I put my keys on the kitchen counter, walked out, then realized they were still there, and the other day I saw Mrs. Greene at the grocery and I just…blanked on her name for a second.",551.57,571.04
+74,provider,Dr. Patel,"Tom, have you noticed any patterns with those lapses, like certain times of day or when she’s busy with other tasks?",571.35,579.73
+75,caregiver,Tom Ellis,"Mostly in the afternoon, when she’s doing laundry or juggling the garden and the housework; we’ve started putting a small tray by the door for her keys, and I keep a list of her regular contacts on the fridge.",580.33,595.63
+76,provider,Dr. Patel,Are there any community resources or support groups you think might help you both stay ahead of these challenges?,596.0,603.61
+77,caregiver,Tom Ellis,"We looked at the senior center’s memory workshop, but the schedule conflicts with her class‑reading group; we might try the online sessions if that works.",604.09,614.0
+78,provider,Dr. Patel,"Margaret, besides the notebook and the clock, have you found any other tricks that make it easier to remember names or appointments?",614.46,623.22
+79,patient,Margaret Ellis,I’ve started using a little voice memo on my phone—just a quick “call Martha at 3 p.m.”—and I put a sticky note on the front door for the next thing I need to remember.,624.6,639.06
+80,provider,Dr. Patel,"How have the voice memos been working for you, Margaret? Do you find you remember the appointments after you record them?",639.61,647.99
+81,patient,Margaret Ellis,"They're pretty helpful—once I hear myself say “call Martha,” it sticks, though sometimes I still need to glance at the sticky note just to be sure.",648.8,659.94
+82,provider,Dr. Patel,"Tom, have you noticed any changes in Margaret’s mood or energy levels lately that we should keep an eye on?",660.59,668.58
+83,caregiver,Tom Ellis,"She’s been a bit more tired after her reading group, but otherwise she’s in good spirits; we’ve just been tweaking her evening routine.",668.91,678.05
+84,provider,Dr. Patel,"Margaret, would you feel comfortable trying a simple daily “brain jog”—like a crossword or a short puzzle—in the morning, to see if it helps with those brief blanks?",678.43,689.49
+85,patient,Margaret Ellis,"I think I could do that, maybe a crossword while I have coffee; I’ve actually kept a few spare ones in the drawer already.",691.28,701.58
+86,provider,Dr. Patel,"Great, let’s keep using the memos and the tray, try the crossword, and I’ll see you back here in three months for a check‑in; if anything comes up before then, give us a call. Take care, both of you.",702.02,717.32

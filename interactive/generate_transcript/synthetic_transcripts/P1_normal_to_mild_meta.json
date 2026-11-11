@@ -1,0 +1,29 @@
+{
+  "patient_id": "P1",
+  "severity": "normal_to_mild",
+  "assumed_dsrs": 9,
+  "persona": {
+    "patient_id": "P1",
+    "patient": "Margaret Ellis",
+    "age": 74,
+    "background": "a retired middle-school teacher who lives with her husband and still manages most of her own day",
+    "caregiver": "Tom Ellis",
+    "relationship": "husband",
+    "provider": "Dr. Patel",
+    "situation": "a routine follow-up memory clinic visit; she has noticed occasional lapses, such as misplacing keys, forgetting a friend's name for a moment, and missing an appointment once"
+  },
+  "n_turns": 87,
+  "role_share_pct": {
+    "provider": 50.6,
+    "patient": 27.6,
+    "caregiver": 21.8
+  },
+  "duration_seconds": 717.32,
+  "fallback_turns": [],
+  "generation": {
+    "model": "openai.gpt-oss-120b",
+    "base_url": "https://chat.dartmouth.edu/api",
+    "temperature": 0.9,
+    "seed": 0
+  }
+}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Upload a transcript - HealthPAL{% endblock %}
+{% block body %}
+<main class="container section">
+  <h1 class="page-title">Upload a visit transcript</h1>
+  <p class="muted-text">Upload one visit as a CSV file. The analysis starts as soon as the file is uploaded.</p>
+
+  {% if error %}<p class="notice error-notice">{{ error }}</p>{% endif %}
+
+  <form class="card card-pad upload-card" method="post" action="{{ url_for('upload') }}" enctype="multipart/form-data">
+    <label class="field-label" for="transcript">Transcript file (.csv)</label>
+    <input id="transcript" name="transcript" type="file" accept=".csv,text/csv" required>
+    <button class="btn" type="submit">Upload and analyze</button>
+  </form>
+</main>
+{% endblock %}

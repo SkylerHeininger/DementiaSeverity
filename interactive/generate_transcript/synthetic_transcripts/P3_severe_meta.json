@@ -1,0 +1,29 @@
+{
+  "patient_id": "P3",
+  "severity": "severe",
+  "assumed_dsrs": 44,
+  "persona": {
+    "patient_id": "P3",
+    "patient": "Dorothy Whitaker",
+    "age": 85,
+    "background": "a former church organist who lives with her daughter, who has become her full-time caregiver",
+    "caregiver": "Karen Whitaker",
+    "relationship": "daughter",
+    "provider": "Dr. Patel",
+    "situation": "a follow-up memory clinic visit; she needs help with bathing, dressing, and eating, speaks very little, is sometimes restless at night, and her daughter is exhausted"
+  },
+  "n_turns": 75,
+  "role_share_pct": {
+    "provider": 50.7,
+    "caregiver": 45.3,
+    "patient": 4.0
+  },
+  "duration_seconds": 499.06,
+  "fallback_turns": [],
+  "generation": {
+    "model": "openai.gpt-oss-120b",
+    "base_url": "https://chat.dartmouth.edu/api",
+    "temperature": 0.9,
+    "seed": 2
+  }
+}

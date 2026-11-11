@@ -1,0 +1,29 @@
+{
+  "patient_id": "P2",
+  "severity": "moderate",
+  "assumed_dsrs": 27,
+  "persona": {
+    "patient_id": "P2",
+    "patient": "Robert Alvarez",
+    "age": 79,
+    "background": "a retired machinist who lives with his wife and used to handle the family finances",
+    "caregiver": "Linda Alvarez",
+    "relationship": "wife",
+    "provider": "Dr. Patel",
+    "situation": "a follow-up memory clinic visit; he repeats questions and stories, has trouble with bills and medications, sometimes gets confused about the day, and his wife has taken over many tasks"
+  },
+  "n_turns": 79,
+  "role_share_pct": {
+    "provider": 50.6,
+    "caregiver": 32.9,
+    "patient": 16.5
+  },
+  "duration_seconds": 514.17,
+  "fallback_turns": [],
+  "generation": {
+    "model": "openai.gpt-oss-120b",
+    "base_url": "https://chat.dartmouth.edu/api",
+    "temperature": 0.9,
+    "seed": 1
+  }
+}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block header %}
+<header class="site-header">
+  <nav class="container nav" aria-label="Primary navigation">
+    <a class="brand" href="#top">Health<span class="brand-accent">PAL</span></a>
+    <a class="btn" href="{{ url_for('login') }}">Log in</a>
+  </nav>
+</header>
+{% endblock %}
+{% block body %}
+<main class="page">
+
+  <section id="top" class="container hero">
+    <h1 class="sr-only">HealthPAL</h1>
+    <div class="hero-brand"><span class="brand">Health<span class="brand-accent">PAL</span></span></div>
+    <p class="lead">A personal library of clinic visit recordings to help patients and caregivers manage care.</p>
+    <p class="demo-note">This site demonstrates clinician-facing tools built on visit recordings. It analyzes transcripts you upload
+      and is not the real HealthPAL application.</p>
+  </section>
+
+  <section id="about" class="band">
+    <div class="container section">
+      <p class="eyebrow">About</p>
+      <p class="prose">HealthPAL empowers patients and caregivers to make recordings of clinic visits, store them securely, and easily
+        navigate the audio or video recordings. Once a recording is made, patients can share their recordings with family members or
+        caregivers, make their own notes in-app, and play back their recordings to hear any information they may have missed at the
+        time of recording. The clinician tools in this demo show how features extracted from a visit, such as who is speaking, the kinds
+        of questions asked, and repetition, can give clinicians context alongside the recording.</p>
+    </div>
+  </section>
+</main>
+{% endblock %}

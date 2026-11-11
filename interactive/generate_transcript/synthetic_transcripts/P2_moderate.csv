@@ -1,0 +1,80 @@
+turn,role,speaker,text,timestamp_seconds,end_seconds
+0,provider,Dr. Patel,"Good morning, Robert, Linda. How have things been since we last saw you?",0.13,5.43
+1,caregiver,Linda Alvarez,"Morning, Doctor. It's been… well, mostly okay. He's been forgetting a few things, but we’re managing.",6.2,12.65
+2,provider,Dr. Patel,What specific things have been most challenging for you both?,13.03,17.17
+3,caregiver,Linda Alvarez,"Mostly the bills. He keeps misplacing the checkbook, and I have to go over the statements every week.",17.59,24.81
+4,provider,Dr. Patel,"Robert, have you noticed any changes with your memory or daily tasks?",25.7,30.62
+5,patient,Robert Alvarez,"I… I don't think so. I mean, I remember most things. Just… the TV numbers sometimes.",32.67,40.97
+6,provider,Dr. Patel,"Can you tell me what day it is today, and what you did yesterday?",41.78,47.47
+7,patient,Robert Alvarez,"Today is… Thursday? I think. Yesterday… I was at the shop, fixing… I mean, I was at the store. Yeah.",49.74,60.04
+8,provider,Dr. Patel,How often do you have to step in for his prescriptions?,60.56,65.09
+9,caregiver,Linda Alvarez,"Almost every month now, I check the bottles, refill them, make sure he takes them.",65.99,72.05
+10,provider,Dr. Patel,And the checkbook—where does he usually keep it?,72.79,76.16
+11,caregiver,Linda Alvarez,"He used to have it in the drawer by the kitchen table, but lately it's gone, so I keep the new one in the filing cabinet.",76.87,87.17
+12,provider,Dr. Patel,Can you tell me the name of the medication you take for your blood pressure?,87.92,93.99
+13,patient,Robert Alvarez,Um… it's… the blue one? I think it's called... Lisinopril? Maybe.,95.58,101.38
+14,provider,Dr. Patel,Do you remember when you last saw your doctor for a check‑up before today?,101.84,107.52
+15,patient,Robert Alvarez,"Last… last month? No, I think it was... maybe two months ago. I can't... I mean, I think it was in June.",108.75,120.05
+16,provider,Dr. Patel,"Linda, how many times a week do you have to help Robert sort his pill boxes?",120.49,126.94
+17,caregiver,Linda Alvarez,"Nearly every day, I end up doing it both morning and night.",127.89,132.8
+18,provider,Dr. Patel,Are there any bills he still insists on handling on his own?,133.49,138.4
+19,caregiver,Linda Alvarez,"He tries to pay the electric bill himself, but I always review it first.",138.98,144.67
+20,provider,Dr. Patel,"Robert, what’s the name of the medicine you take for cholesterol?",145.21,149.74
+21,patient,Robert Alvarez,Um… the red one… Crestor? I think so.,152.89,157.19
+22,provider,Dr. Patel,"Do you feel safe getting around the house, any recent falls or near‑misses?",157.74,163.04
+23,caregiver,Linda Alvarez,"No falls, just a bit wobbly when he stands up too fast.",163.97,168.89
+24,provider,Dr. Patel,"Linda, how confident do you feel about managing his medication schedule when I'm not here?",169.65,175.72
+25,caregiver,Linda Alvarez,"I try, but sometimes I have to double‑check the doses, especially the evenings.",176.45,181.75
+26,provider,Dr. Patel,Do you notice any particular times of day when he gets more confused about the date or day of the week?,182.56,190.93
+27,caregiver,Linda Alvarez,"Mostly in the afternoons, he'll say it's Thursday even though it's Saturday.",191.5,196.42
+28,provider,Dr. Patel,"Robert, can you tell me what day it is today?",197.32,201.46
+29,patient,Robert Alvarez,"Um... I think it's... Friday? No, Monday? Wait.",204.86,209.16
+30,provider,Dr. Patel,"Are there any safety concerns at home we should address, like grab bars or night lights?",210.12,216.57
+31,caregiver,Linda Alvarez,"We have night lights, but the bathroom grab bar feels loose, so I tightened it last week.",217.23,224.07
+32,provider,Dr. Patel,"Linda, how are you handling his prescription refills and the new blood pressure med—any mix‑ups?",224.46,230.53
+33,caregiver,Linda Alvarez,"I call the pharmacy each month, but sometimes I forget if I've picked up the new med; I double‑check the bottle labels.",231.37,240.13
+34,provider,Dr. Patel,"Robert, can you tell me what you took this morning for your blood pressure?",240.58,246.26
+35,patient,Robert Alvarez,"Um... I think I took the blue one, maybe the pink?",249.64,255.44
+36,provider,Dr. Patel,Did you also take your heart meds and the vitamins you usually have with breakfast?,256.08,262.15
+37,patient,Robert Alvarez,Yes... I think. I always take the... the little white pills.,264.19,269.99
+38,provider,Dr. Patel,When was the last time you looked at the bank statement with Linda?,270.68,275.98
+39,patient,Robert Alvarez,"Last week? No, maybe two weeks... I can't remember exactly.",279.34,284.64
+40,provider,Dr. Patel,"Linda, how often are you checking his blood pressure at home?",285.23,289.76
+41,caregiver,Linda Alvarez,"Every morning after breakfast, I write the numbers in his log.",290.63,295.16
+42,provider,Dr. Patel,"Robert, what day is it today?",295.75,298.36
+43,patient,Robert Alvarez,"Uh... I think it's Thursday, maybe Wednesday.",299.56,303.36
+44,provider,Dr. Patel,Have you noticed any unpaid bills or missing checks lately?,304.04,308.19
+45,caregiver,Linda Alvarez,"The electric bill from last month never got paid, so I called them.",309.04,314.34
+46,provider,Dr. Patel,"Do you feel you have enough help, or would a home health aide be useful?",314.87,320.94
+47,caregiver,Linda Alvarez,"I could use some extra help, especially with the pharmacy trips.",321.66,326.19
+48,provider,Dr. Patel,"Linda, how are you managing Robert's meds—do you use a pill organizer?",327.05,331.97
+49,caregiver,Linda Alvarez,"Linda: I fill a weekly box each Sunday, but sometimes I miss the refill call.",332.71,338.78
+50,provider,Dr. Patel,Any falls or near‑falls at home lately?,339.47,342.46
+51,caregiver,Linda Alvarez,"Linda: No falls, but he told me he felt a bit wobbly yesterday getting out of the chair.",342.89,350.11
+52,provider,Dr. Patel,"Is he still driving yourself, or have you limited his trips?",350.47,355.01
+53,caregiver,Linda Alvarez,"Linda: He still drives to the grocery, but I tell him to avoid rush hour.",355.69,361.76
+54,provider,Dr. Patel,We can arrange a driving safety assessment—would you be willing to try that?,362.66,367.96
+55,caregiver,Linda Alvarez,"Linda: Yes, let's set that up.",368.91,371.52
+56,provider,Dr. Patel,Great. I'll send the referral to the occupational therapist; do you have a preferred time of day for the assessment?,371.84,379.83
+57,caregiver,Linda Alvarez,"Mornings are better, I think.",380.79,383.01
+58,provider,Dr. Patel,And about the medication refills—have you set any reminders for the pharmacy calls?,383.36,388.66
+59,caregiver,Linda Alvarez,"I try, but I still forget sometimes.",389.57,392.56
+60,provider,Dr. Patel,"Robert, have you noticed any changes in your memory since our last visit?",393.18,398.48
+61,patient,Robert Alvarez,"Just the same, I think… I mean, I forget stuff.",401.41,406.71
+62,provider,Dr. Patel,"Linda, are you comfortable handling the bills, or would you like help with budgeting?",407.21,412.9
+63,caregiver,Linda Alvarez,"I could use some help, it's getting overwhelming.",413.38,416.76
+64,provider,Dr. Patel,Would you find it useful if a financial counselor from the senior center came by to go over the monthly statements with you?,417.62,426.77
+65,caregiver,Linda Alvarez,"Yes, that sounds good. I get confused with the totals.",427.19,431.34
+66,provider,Dr. Patel,"Just to confirm, Robert’s blood pressure pills—are they taken twice a day, morning and evening?",431.84,437.91
+67,caregiver,Linda Alvarez,"That's right, we use the weekly pill organizer.",438.33,441.71
+68,provider,Dr. Patel,"Robert, can you tell me what day it is today?",442.19,446.33
+69,caregiver,Linda Alvarez,Have you noticed any doses missed or taken at the wrong time lately?,447.3,452.6
+70,provider,Dr. Patel,"Also, Robert, did you manage to attend the church service you mentioned last week?",453.36,459.04
+71,patient,Robert Alvarez,I… I think I went. Maybe Wednesday… I’m not sure.,461.73,467.03
+72,provider,Dr. Patel,"Linda, have you noticed any swelling in Robert’s ankles or any new shortness of breath?",467.54,473.61
+73,caregiver,Linda Alvarez,"No swelling that I’ve seen, and he’s breathing fine.",474.4,478.16
+74,provider,Dr. Patel,"Okay, and regarding the medication list, are there any over‑the‑counter drugs or supplements he's taking?",478.81,484.88
+75,caregiver,Linda Alvarez,"Just his multivitamin each morning, and the occasional ibuprofen for his knees.",485.26,490.17
+76,provider,Dr. Patel,"Robert, can you tell me what you had for dinner last night?",490.69,495.61
+77,patient,Robert Alvarez,"Uh… I think it was chicken, maybe with rice… not sure.",497.6,503.4
+78,provider,Dr. Patel,"Alright, we’ll schedule a follow‑up in three months, arrange the counselor visit, and I’ll call to confirm the medication review; take care, both of you.",504.26,514.17

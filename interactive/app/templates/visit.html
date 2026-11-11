@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% macro role_chip(role) %}<span class="chip role-{{ role }}">{{ ROLE_LABEL.get(role, role) }}</span>{% endmacro %}
+{% macro band_tag(s, band) %}<span class="band-tag band-{{ band }}">{{ s.band_labels[band] }}</span>{% endmacro %}
+{% macro unavailable(key, steps) %}
+  {%- set step = steps.get(key) -%}
+  {%- if step and step.status == 'error' -%}<p class="error-text">{{ step.message }}</p>{%- endif -%}
+{% endmacro %}
+{% macro share_bar(name, key, by) %}<div class="bar-row"><span>{{ name }}</span><div class="stack">{% for r in ROLES %}<span class="seg role-{{ r }}" style="width:{{ by[r][key] }}%" title="{{ ROLE_LABEL[r] }}: {{ '%.1f'|format(by[r][key]) }}%"></span>{% endfor %}</div></div>{% endmacro %}
+{% macro gauge(severity, models, summary) %}
+  {%- set percent_per_point = 100 / 54 -%}
+  {%- set mild_zone_width = 18.5 / 54 * 100 -%}
+  {%- set moderate_zone_width = 18 / 54 * 100 -%}
+
+  <div class="gauge">
+    <div class="zone z1" style="width:{{ mild_zone_width }}%"></div>
+    <div class="zone z2" style="width:{{ moderate_zone_width }}%"></div>
+    <div class="zone z3" style="flex:1"></div>
+
+    {% if severity.reference_score is defined %}
+      <div class="marker ref" style="left:{{ severity.reference_score * percent_per_point }}%">
+        <span class="tag">reference {{ severity.reference_score }}</span>
+      </div>
+    {% endif %}
+
+    {% for model in models %}
+      {% set color = MODEL_COLORS[loop.index0 % 4] %}
+      <div class="marker small"
+           style="left:{{ model.predicted * percent_per_point }}%;background:{{ color }}"
+           title="{{ model.label }} {{ model.predicted|num }}"></div>
+    {% endfor %}
+
+    {% if models|length > 1 %}
+      <div class="marker" style="left:{{ summary.predicted * percent_per_point }}%">
+        <span class="tag">average {{ summary.predicted|num }}</span>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="gauge-scale">
+    <span>0</span>
+    <span>18</span>
+    <span>36</span>
+    <span>54</span>
+  </div>
+
+  <div class="legend">
+    {% for model in models %}
+      {% set color = MODEL_COLORS[loop.index0 % 4] %}
+      <span style="--c:{{ color }}">{{ model.label }} {{ model.predicted|num }}</span>
+    {% endfor %}
+  </div>
+{% endmacro %}
+{% macro severity_overview(s, v) %}
+  {%- if not v.ok -%}
+    <p class="muted">No model predictions are available yet.</p>{% for m in s.models %}<p class="muted small">{{ m.label }}: {{ m.message }}</p>{% endfor %}
+  {%- else -%}
+    {%- set sum = s.summary -%}{%- set interp = s.interpretations[sum.band] -%}
+    <div class="big-score"><span class="value">{{ sum.predicted|num }}</span><span class="of">of 54{% if v.ok|length > 1 %} (average of the models){% endif %}</span>{{ band_tag(s, sum.band) }}</div>
+    {{ gauge(s, v.ok, sum) }}
+    {%- for m in s.models if m.status != 'ok' %}<p class="muted small">{{ m.label }}: {{ m.message }}</p>{% endfor %}
+    <div class="interp"><h4>{{ interp.label }} (DSRS {{ interp.range }})</h4><p>{{ interp.summary }}</p>
+    <b>Often discussed</b><ul>{% for f in interp.focus %}<li>{{ f }}</li>{% endfor %}</ul></div>
+  {%- endif -%}
+{% endmacro %}
+{% macro severity_model(s, m, v) %}
+  {%- if m.status != 'ok' -%}<p class="muted">{{ m.message }}</p>
+  {%- else -%}
+    {%- set e = m.explanation -%}{%- set lim = v.limits[m.key] -%}
+    <div class="big-score"><span class="value">{{ m.predicted|num }}</span><span class="of">of 54</span>{{ band_tag(s, m.band) }}</div>
+    {%- if e and e.contributions %}<h3>Feature importance for this DSRS prediction</h3>
+    <div class="dv-axis"><span></span><div class="dv-axis-labels"><span>lowers the estimate</span><span>raises the estimate</span></div><span></span></div>
+    {%- for c in e.contributions %}
+    <div class="dv-row"><div class="dv-label">{{ c.label }}<small>{{ c.value|num }}% {{ c.unit }}, average {{ c.average|num }}%</small></div>
+    <div class="dv-bar"><div class="dv-half left">{% if c.points < 0 %}<span class="dv-neg" style="width:{{ 100 * c.points|abs / lim.max_abs }}%"></span>{% endif %}</div>
+    <div class="dv-half right">{% if c.points > 0 %}<span class="dv-pos" style="width:{{ 100 * c.points / lim.max_abs }}%"></span>{% endif %}</div></div>
+    <div class="dv-pts {{ 'pos' if c.points > 0 else 'neg' }}">{{ '%+.1f'|format(c.points) }}</div></div>
+    {%- endfor %}
+    {%- endif %}
+  {%- endif -%}
+{% endmacro %}
+{% block title %}{{ visit.title }} - HealthPAL{% endblock %}
+{% block nav_width %} wide{% endblock %}
+{% block body %}
+<main class="container wide section">
+  <a class="link" href="{{ url_for('clinician') }}">Upload another transcript</a>
+  <h1 class="page-title title-gap">{{ visit.title }}</h1>
+  <p class="muted-text">Uploaded transcript</p>
+
+  <div class="card card-pad summary-card">
+    <div class="row-between">
+      <h2 class="section-title">Visit summary</h2>
+      <button class="btn" id="process-btn" type="button">{{ 'Process again' if saved else 'Process data' }}</button>
+    </div>
+    <dl class="summary-grid">
+      <div><dt>Uploaded</dt><dd>{{ visit.uploaded or '-' }}</dd></div>
+      <div><dt>Length</dt><dd>{{ visit.n_turns or '-' }} turns{% if visit.duration_minutes %}, {{ visit.duration_minutes }} min{% endif %}</dd></div>
+      <div><dt>End times</dt><dd>{{ 'Estimated from word counts' if visit.end_estimated else 'From the file' }}</dd></div>
+      <div><dt>File</dt><dd>{% for m in visit.media %}{{ m.filename }} &middot; {{ m.size_bytes | filesize }}{% endfor %}</dd></div>
+    </dl>
+    <p class="muted-text small" id="process-sub">
+      {%- if saved %}Last processed {{ saved.processed_at.replace('T', ' ') }}
+      {%- elif outdated %}These results were saved by an older version of the app. Process data again to update them.
+      {%- endif %}</p>
+    <ul class="steps" id="steps"></ul>
+  </div>
+
+  <div class="layout">
+    <section class="card transcript-card">
+      <div class="card-head"><h2 class="section-title">Transcript</h2><span class="muted-text small">{{ turns|length }} turns</span></div>
+      <div id="transcript" class="transcript">
+        {%- set turn_groups = results.dialogue_acts.turn_groups if 'dialogue_acts' in results else {} %}
+        {%- for t in turns %}{% set groups = turn_groups.get(t.i|string, []) %}
+        <div class="turn" id="turn-{{ t.i }}" data-groups="{{ groups|join(' ') }}"><div class="turn-head">{{ role_chip(t.role) }}<span>{{ t.speaker }}</span><span>{{ t.start|clock }}</span><span>#{{ t.i + 1 }}</span>{% for g in groups %}<span class="dchip">{{ g|replace('_', ' ') }}</span>{% endfor %}</div><p>{{ t.text }}</p></div>
+        {%- endfor %}
+      </div>
+    </section>
+
+    <section class="card analysis-card">
+      <div class="tabs" role="tablist" aria-label="Visit analysis">
+        <button class="tab" role="tab" id="tab-stats" data-tab="stats" aria-controls="panel-stats" type="button">Visit statistics</button>
+        <button class="tab" role="tab" id="tab-da" data-tab="da" aria-controls="panel-da" type="button">Dialogue acts</button>
+        <button class="tab" role="tab" id="tab-rep" data-tab="rep" aria-controls="panel-rep" type="button">Repetition</button>
+        <button class="tab" role="tab" id="tab-sev" data-tab="sev" aria-controls="panel-sev" type="button">Severity prediction</button>
+      </div>
+
+      <div class="panel" role="tabpanel" id="panel-stats" aria-labelledby="tab-stats">
+        <h2 class="section-title">Visit summary statistics</h2>
+        {%- if 'stats' in results %}{% set s = results.stats %}{% set v = view.stats %}
+        <div class="legend">{% for r in ROLES %}<span style="--c:var(--{{ r }})">{{ ROLE_LABEL[r] }}</span>{% endfor %}</div>
+        <h3>Share of the visit</h3>{{ share_bar('Turns', 'turn_share', v.by) }}{{ share_bar('Words', 'word_share', v.by) }}{{ share_bar('Speaking time', 'time_share', v.by) }}
+        <h3>By speaker</h3>
+        <table class="data"><thead><tr><th>Speaker</th><th class="num">Turns</th><th class="num">Words</th><th class="num">Time</th><th class="num">Median words/turn</th><th class="num">Median reply delay</th></tr></thead><tbody>
+          {%- for r in s.roles %}
+          <tr><td>{{ role_chip(r.role) }}</td><td class="num">{{ r.turns }} ({{ '%.1f'|format(r.turn_share) }}%)</td><td class="num">{{ r.words }}</td><td class="num">{{ r.seconds|clock }}</td><td class="num">{{ r.median_words|num }}</td><td class="num">{{ '-' if r.median_response_seconds is none else (r.median_response_seconds|num|string) ~ ' s' }}</td></tr>
+          {%- endfor %}
+        </tbody></table>
+        <h3>Who is speaking over the visit</h3>
+        <div class="tl">{% for k in range(v.bins) %}<div class="tl-col" title="{{ s.timeline.edges[k]|clock }} to {{ s.timeline.edges[k + 1]|clock }}">{% for r in ROLES %}<span class="tl-seg role-{{ r }}" style="height:{{ [100 * s.timeline.seconds[r][k] / v.bin_length, 100]|min }}%"></span>{% endfor %}</div>{% endfor %}</div>
+        <div class="tl-axis"><span>0:00</span><span>{{ (s.duration_seconds / 2)|clock }}</span><span>{{ s.duration_seconds|clock }}</span></div>
+        {%- else %}{{ unavailable('stats', steps) }}{% endif %}
+      </div>
+
+      <div class="panel" role="tabpanel" id="panel-da" aria-labelledby="tab-da" hidden>
+        <h2 class="section-title">Dialogue act statistics</h2>
+        {%- if 'dialogue_acts' in results %}{% set d = results.dialogue_acts %}{% set v = view.da %}
+        <h3>Who is asking questions</h3>
+        {%- for r in ROLES %}{% set q = d.questions_by_role[r] %}
+        <div class="bar-row wide"><span>{{ ROLE_LABEL[r] }}</span><div class="single"><span style="width:{{ 100 * q.count / v.max_questions }}%;background:var(--{{ r }})"></span></div><span class="num">{{ q.count }} ({{ '%.1f'|format(q.share) }}%)</span></div>
+        {%- endfor %}
+        <h3>Dialogue act groups</h3>
+        <div class="chips">{% for g in d.groups %}<button type="button" class="gchip" data-group="{{ g }}">{{ g|replace('_', ' ') }} <span>{{ v.group_totals[g] }}</span></button>{% endfor %}</div>
+        <h3>Segments by speaker and group</h3>
+        <table class="data"><thead><tr><th>Speaker</th>{% for g in d.groups %}<th class="num">{{ g|replace('_', ' ') }}</th>{% endfor %}</tr></thead><tbody>
+          {%- for r in ROLES %}
+          <tr><td>{{ role_chip(r) }}</td>{% for g in d.groups %}{% set n = d.role_group_counts[r].get(g, 0) %}<td class="heat" style="background:rgba(15,118,110,{{ 0.55 * n / v.max_cell }})">{{ n or '' }}</td>{% endfor %}</tr>
+          {%- endfor %}
+        </tbody></table>
+        {%- else %}{{ unavailable('dialogue_acts', steps) }}{% endif %}
+      </div>
+
+      <div class="panel" role="tabpanel" id="panel-rep" aria-labelledby="tab-rep" hidden>
+        <h2 class="section-title">Repetition measures</h2>
+        <p class="placeholder">Coming soon.</p>
+      </div>
+
+      <div class="panel" role="tabpanel" id="panel-sev" aria-labelledby="tab-sev" hidden>
+        <h2 class="section-title">Dementia severity prediction</h2>
+        {%- if 'severity' in results %}{% set s = results.severity %}{% set v = view.severity %}
+        <div class="seg-control" role="group" aria-label="Prediction view"><button type="button" class="seg-btn active" data-view="overview">Overview</button>{% for m in s.models %}<button type="button" class="seg-btn" data-view="{{ m.key }}">{{ m.label }}</button>{% endfor %}</div>
+        <div class="sev-view" data-view="overview">{{ severity_overview(s, v) }}</div>
+        {%- for m in s.models %}
+        <div class="sev-view" data-view="{{ m.key }}" hidden>{{ severity_model(s, m, v) }}</div>
+        {%- endfor %}
+        {%- else %}{{ unavailable('severity', steps) }}{% endif %}
+      </div>
+    </section>
+  </div>
+</main>
+<script id="visit-data" type="application/json">{{ payload | tojson }}</script>
+<script src="{{ url_for('static', filename='visit.js') }}"></script>
+{% endblock %}
