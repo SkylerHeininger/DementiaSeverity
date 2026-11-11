@@ -51,6 +51,7 @@ narwhals==2.26.0
 networkx==3.7
 numpy==2.5.3
 openai==3.41.0
+ollama==0.6.3
 openpyxl==3.1.5
 orjson==3.13.0
 packaging==26.3
@@ -71,6 +72,7 @@ rich==15.0.0
 safetensors==0.8.0
 scikit-learn==1.9.1
 scipy==1.18.1
+sentence-transformers==6.2.0
 setuptools==84.0.0
 shellingham==1.5.4
 six==1.17.0
