@@ -109,8 +109,11 @@
       <div class="card-head"><h2 class="section-title">Transcript</h2><span class="muted-text small">{{ turns|length }} turns</span></div>
       <div id="transcript" class="transcript">
         {%- set turn_groups = results.dialogue_acts.turn_groups if 'dialogue_acts' in results else {} %}
-        {%- for t in turns %}{% set groups = turn_groups.get(t.i|string, []) %}
-        <div class="turn" id="turn-{{ t.i }}" data-groups="{{ groups|join(' ') }}"><div class="turn-head">{{ role_chip(t.role) }}<span>{{ t.speaker }}</span><span>{{ t.start|clock }}</span><span>#{{ t.i + 1 }}</span>{% for g in groups %}<span class="dchip">{{ g|replace('_', ' ') }}</span>{% endfor %}</div><p>{{ t.text }}</p></div>
+        {%- set tp = results.topics if 'topics' in results and results.topics.turn_segment|length == turns|length else none %}
+        {%- for t in turns %}{% set groups = turn_groups.get(t.i|string, []) %}{% set seg = tp.segments[tp.turn_segment[t.i]] if tp else none %}
+        <div class="turn" id="turn-{{ t.i }}" data-groups="{{ groups|join(' ') }}"{% if seg %} data-thread="{{ seg.thread }}"{% endif %}>
+          {%- if seg and seg.start == t.i %}{% set c = view.topics.seg_color[seg.id] %}<div class="topic-start"><span class="tchip{{ ' rep' if c }}"{% if c %} style="--c:{{ c }}"{% endif %}>Topic: {{ seg.label|cap }}{% if c %} &middot; revisited{% endif %}</span></div>{% endif -%}
+          <div class="turn-head">{{ role_chip(t.role) }}<span>{{ t.speaker }}</span><span>{{ t.start|clock }}</span><span>#{{ t.i + 1 }}</span>{% for g in groups %}<span class="dchip">{{ g|replace('_', ' ') }}</span>{% endfor %}</div><p>{{ t.text }}</p></div>
         {%- endfor %}
       </div>
     </section>
@@ -119,7 +122,7 @@
       <div class="tabs" role="tablist" aria-label="Visit analysis">
         <button class="tab" role="tab" id="tab-stats" data-tab="stats" aria-controls="panel-stats" type="button">Visit statistics</button>
         <button class="tab" role="tab" id="tab-da" data-tab="da" aria-controls="panel-da" type="button">Dialogue acts</button>
-        <button class="tab" role="tab" id="tab-rep" data-tab="rep" aria-controls="panel-rep" type="button">Repetition</button>
+        <button class="tab" role="tab" id="tab-rep" data-tab="rep" aria-controls="panel-rep" type="button">Topics &amp; repetition</button>
         <button class="tab" role="tab" id="tab-sev" data-tab="sev" aria-controls="panel-sev" type="button">Severity prediction</button>
       </div>
 
@@ -159,8 +162,51 @@
       </div>
 
       <div class="panel" role="tabpanel" id="panel-rep" aria-labelledby="tab-rep" hidden>
-        <h2 class="section-title">Repetition measures</h2>
-        <p class="placeholder">Coming soon.</p>
+        <h2 class="section-title">Topics and repetition</h2>
+        {%- if 'topics' in results %}{% set tp = results.topics %}{% set v = view.topics %}{% set sm = tp.summary %}
+        <div class="tiles">
+          <div class="tile"><b>{{ sm.n_segments }}</b><span>topic segments</span></div>
+          <div class="tile"><b>{{ sm.n_topics }}</b><span>distinct topics</span></div>
+          <div class="tile"><b>{{ sm.n_repeated }}</b><span>topics revisited ({{ sm.n_returns }} return{{ '' if sm.n_returns == 1 else 's' }})</span></div>
+          <div class="tile"><b>{{ '%.0f'|format(sm.repeated_turn_share) }}%</b><span>of turns in revisited topics</span></div>
+        </div>
+
+        <h3>Topic timeline</h3>
+        <p class="muted small">One block per topic segment, sized by its number of turns. Topics that come back share a color. Click a block to find it in the transcript.</p>
+        <div class="topic-strip">{% for s in tp.segments %}{% set c = v.seg_color[s.id] %}<button type="button" class="tseg{{ ' rep' if c }}" data-thread="{{ s.thread }}"{% if c %} style="flex-grow:{{ s.n_turns }};--c:{{ c }}"{% else %} style="flex-grow:{{ s.n_turns }}"{% endif %} title="#{{ s.start + 1 }}{% if s.end > s.start %}&ndash;{{ s.end + 1 }}{% endif %}: {{ s.label|cap }}" aria-label="Turns {{ s.start + 1 }} to {{ s.end + 1 }}: {{ s.label|cap }}"></button>{% endfor %}</div>
+        <div class="tl-axis"><span>turn 1</span><span>turn {{ turns|length }}</span></div>
+
+        <h3>Topics that came back</h3>
+        {%- if v.repeated %}
+        <div class="rep-list">
+          {%- for t in v.repeated %}
+          <div class="rep-row" data-thread="{{ t.id }}" style="--c:{{ v.color[t.id] }}">
+            <button type="button" class="rep-name" data-thread="{{ t.id }}">{{ t.label|cap }}</button>
+            <span class="rep-count">{{ t.visits|length - 1 }} return{{ 's' if t.visits|length > 2 }}</span>
+            {%- if t.labels|length > 1 %}<span class="rep-labels">Labeled {{ t.labels|map('cap')|join(' · ') }}</span>{% endif %}
+            <span class="rep-visits">{% for vi in t.visits %}<button type="button" class="rep-visit" data-thread="{{ t.id }}" data-turn="{{ vi.start }}" title="{{ vi.labels|map('cap')|join(', ') }}">#{{ vi.start + 1 }}{% if vi.end > vi.start %}&ndash;{{ vi.end + 1 }}{% endif %}</button>{% if not loop.last %}<span class="rep-gap" aria-hidden="true">&rarr;</span>{% endif %}{% endfor %}</span>
+          </div>
+          {%- endfor %}
+        </div>
+        <h3>Who brings a topic back</h3>
+        {%- set most = [1] + sm.returns_by_role.values()|list %}
+        {%- for r in ROLES %}{% set n = sm.returns_by_role[r] %}
+        <div class="bar-row wide"><span>{{ ROLE_LABEL[r] }}</span><div class="single"><span style="width:{{ 100 * n / most|max }}%;background:var(--{{ r }})"></span></div><span class="num">{{ n }}</span></div>
+        {%- endfor %}
+        {%- else %}
+        <p class="muted">No topic came up more than once in this visit.</p>
+        {%- endif %}
+
+        <details class="seg-list"><summary>All {{ sm.n_segments }} topic segments</summary>
+          <table class="data"><thead><tr><th class="num">Turns</th><th>Topic label</th><th>Started by</th></tr></thead><tbody>
+            {%- for s in tp.segments %}{% set c = v.seg_color[s.id] %}
+            <tr class="seg-row" data-thread="{{ s.thread }}" data-turn="{{ s.start }}"><td class="num">{{ s.start + 1 }}{% if s.end > s.start %}&ndash;{{ s.end + 1 }}{% endif %}</td><td>{% if c %}<span class="dot" style="--c:{{ c }}"></span>{% endif %}{{ s.label|cap }}</td><td>{{ role_chip(s.opened_by) }}</td></tr>
+            {%- endfor %}
+          </tbody></table>
+        </details>
+        <p class="muted small method-note">Topic boundaries and labels come from a local LLM ({{ tp.llm_model }}, via Ollama). Labels at least {{ tp.same_cosine }} cosine-similar ({{ tp.embed_model.split('/')[-1] }} embeddings) count as the same topic, so a topic &ldquo;comes back&rdquo; when the conversation leaves it and later returns.</p>
+        {%- elif steps.get('topics', {}).get('status') == 'error' %}{{ unavailable('topics', steps) }}
+        {%- else %}<p class="placeholder">No topics yet. Process the visit to add them (topic labeling needs Ollama running locally).</p>{% endif %}
       </div>
 
       <div class="panel" role="tabpanel" id="panel-sev" aria-labelledby="tab-sev" hidden>

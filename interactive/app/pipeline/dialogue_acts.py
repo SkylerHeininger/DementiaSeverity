@@ -5,9 +5,9 @@ from pathlib import Path
 import pandas as pd
 
 import config
+from config import ROLES
 from .da_groups import GROUP_ORDER, map_da_to_group
 
-ROLES = ("provider", "patient", "caregiver")
 loaded = {}
 
 

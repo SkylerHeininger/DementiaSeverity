@@ -8,14 +8,13 @@ To run:
 python embeddings/boundary_qa.py "$DATA"
 """
 import argparse
-import json
 import os
 
 import numpy as np
 import pandas as pd
 
-from llm_topic_labels import DEFAULT_MERGE_COSINE_THRESHOLD, MIN_WORDS_FOR_BOUNDARY, STRIDE, WINDOW, cache_path
-from load_data import load_roles, load_transcript
+from llm_topic_labels import DEFAULT_MERGE_COSINE_THRESHOLD, MIN_WORDS_FOR_BOUNDARY, STRIDE, WINDOW, load_cache
+from load_data import EMBED_MODEL, key as visit_key, load_roles, load_transcript
 
 N_PERM = 2000
 GAP_THRESHOLD = 2
@@ -54,12 +53,9 @@ def window_edge_flags(idxs, n_turns):
     return flags
 
 def analyze_visit(path, roles, outputs_dir):
-    vid_cache = cache_path(outputs_dir, _visit_id(path))
-    if not os.path.exists(vid_cache):
+    labels, _ = load_cache(outputs_dir, visit_key(path))   # None if missing or made with an older prompt/config
+    if labels is None:
         return None
-    with open(vid_cache) as f:
-        data = json.load(f)
-    labels = {int(k): v for k, v in data["labels"].items()}
     idxs = sorted(labels.keys())
 
     t = load_transcript(path, roles)
@@ -94,10 +90,6 @@ def analyze_visit(path, roles, outputs_dir):
         "idxs": idxs, "labels": labels, "short_gap_turns": short_gap_turns,
     }
 
-def _visit_id(path):
-    from load_data import key
-    return key(path)
-
 # Export boundary snippets for manual review
 def export_snippets(path, t, idxs, short_gap_turns, out_f, n=3):
     picks = short_gap_turns[:2] + [i for i in idxs if i not in short_gap_turns][:1]
@@ -117,18 +109,12 @@ def export_snippets(path, t, idxs, short_gap_turns, out_f, n=3):
 def merge_collapse_zone_report(idx_df, roles, outputs_dir, cosine_threshold):
     from sentence_transformers import SentenceTransformer
     from llm_topic_labels import merge_boundaries
-    merge_model = SentenceTransformer("FremyCompany/BioLORD-2023", device="cpu")
+    merge_model = SentenceTransformer(EMBED_MODEL, device="cpu")
 
     in_zone, out_zone, n_visits = 0, 0, 0
     for _, row in idx_df.iterrows():
-        vid = _visit_id(row["path"])
-        vc = cache_path(outputs_dir, vid)
-        if not os.path.exists(vc):
-            continue
-        with open(vc) as f:
-            data = json.load(f)
-        labels = {int(k): v for k, v in data["labels"].items()}
-        if len(labels) < 2:
+        labels, _ = load_cache(outputs_dir, visit_key(row["path"]))
+        if labels is None or len(labels) < 2:
             continue
         t = load_transcript(row["path"], roles)
         merged = merge_boundaries(labels, merge_model, cosine_threshold)        # dedup_stitching off by default

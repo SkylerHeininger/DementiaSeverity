@@ -1,6 +1,7 @@
 import numpy as np
 
-ROLES = ("provider", "patient", "caregiver")
+from config import ROLES
+
 N_BINS = 24
 
 

@@ -7,12 +7,13 @@ from datetime import datetime
 import config
 import visits
 
-from . import dialogue_acts, severity, stats
+from . import dialogue_acts, severity, stats, topics
 
 STEPS = [
     ("stats", "Visit summary statistics", stats.run),
     ("dialogue_acts", "Dialogue acts", dialogue_acts.run),
     ("severity", "DSRS prediction", severity.run),
+    ("topics", "Topics (local LLM)", topics.run),   # last: slowest step, and nothing depends on it
 ]
 
 SCHEMA = 3

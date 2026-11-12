@@ -1,5 +1,7 @@
-ROLES = ("provider", "patient", "caregiver")
+from config import ROLES
+
 MODEL_COLORS = ["#0f766e", "#4f46e5", "#d97706", "#be185d"]
+TOPIC_COLORS = ["#2563eb", "#db2777", "#16a34a", "#ea580c", "#7c3aed", "#0891b2", "#ca8a04", "#dc2626", "#4d7c0f", "#9333ea"]
 
 
 def stats_view(stats):
@@ -25,12 +27,26 @@ def severity_view(severity):
     return {"ok": ok, "limits": limits}
 
 
+def topics_view(topics):
+    """A color for each repeated topic (topics seen once stay gray), in order of first appearance."""
+    repeated = [t for t in topics["threads"] if t["repeated"]]
+    color = {t["id"]: TOPIC_COLORS[k % len(TOPIC_COLORS)] for k, t in enumerate(repeated)}
+    return {
+        "color": color,
+        "repeated": repeated,
+        "seg_color": [color.get(s["thread"]) for s in topics["segments"]],
+        "max_returns": max([1] + [len(t["visits"]) - 1 for t in repeated]),
+    }
+
+
 def build(results):
     out = {}
     if "stats" in results:
         out["stats"] = stats_view(results["stats"])
     if "dialogue_acts" in results:
         out["da"] = da_view(results["dialogue_acts"])
+    if "topics" in results:
+        out["topics"] = topics_view(results["topics"])
     if "severity" in results:
         out["severity"] = severity_view(results["severity"])
     return out

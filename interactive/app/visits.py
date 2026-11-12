@@ -8,8 +8,8 @@ import numpy as np
 import pandas as pd
 
 import config
+from config import ROLES
 
-ROLES = ("provider", "patient", "caregiver")
 ROLE_ALIASES = {"clinician": "provider", "doctor": "provider", "physician": "provider"}
 REQUIRED_COLUMNS = ("role", "text", "timestamp_seconds")
 ID_PATTERN = re.compile(r"^[A-Za-z0-9_-]{1,80}$")

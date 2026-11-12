@@ -7,7 +7,7 @@ import config
 import pipeline
 import visits
 from pipeline import view
-from pipeline.stats import ROLES
+from config import ROLES
 
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = config.MAX_UPLOAD_MB * 1024 * 1024
@@ -25,6 +25,13 @@ def version_static(endpoint, values):
 
 ROLE_LABEL = {"provider": "Provider", "patient": "Patient", "caregiver": "Caregiver"}
 app.jinja_env.globals.update(ROLES=ROLES, ROLE_LABEL=ROLE_LABEL, MODEL_COLORS=view.MODEL_COLORS)
+
+
+@app.template_filter("cap")
+def cap(text):
+    """Capitalize the first letter only, so acronyms like "BP" survive (Jinja's capitalize lowercases the rest)."""
+    text = str(text)
+    return text[:1].upper() + text[1:]
 
 
 @app.template_filter("clock")
