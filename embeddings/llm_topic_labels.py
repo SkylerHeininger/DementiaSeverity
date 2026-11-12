@@ -227,7 +227,10 @@ def merge_boundaries(labels, model, cosine_threshold=DEFAULT_MERGE_COSINE_THRESH
 def topic_duration_features(df, boundary_col="new_topic_llm"):
     boundary = df[boundary_col].fillna(0).astype(int)
     seg = boundary.cumsum()
-    seg = seg.where(seg > 0, 1)   # turns before the first boundary belong to run 1
+    # Turns before the first boundary belong to run 1. turn_dynamics.conversation_features and the
+    # demo app's Topics step count them as a separate topic instead; this definition is kept as is
+    # because the reported topic-duration results were computed with it.
+    seg = seg.where(seg > 0, 1)
 
     turns_per_run = seg.value_counts()
     words_per_run = df.groupby(seg)["word_count"].sum()

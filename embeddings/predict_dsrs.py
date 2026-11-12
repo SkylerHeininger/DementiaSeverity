@@ -196,7 +196,7 @@ def run_ablations(df, probe_set="orig", groups=("talk_time", "turn_dynamics", "t
 
 # Build sequences of turn embeddings for each visit
 def build_sequences(df, roles, cache_dir, model):
-    """{visit_id: (T, D+3) float32 array}; D = embedding dim, +3 = role one-hot."""
+    """{visit_id: (T, D+R) float32 array}; D = embedding dim, R = len(ROLE_CHANNELS) role one-hot columns."""
     seqs = {}
     for i, row in df.iterrows():
         emb, role = get_turn_embeddings(row["path"], roles, cache_dir, model)

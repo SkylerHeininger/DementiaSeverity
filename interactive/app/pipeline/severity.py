@@ -2,9 +2,9 @@ import joblib
 import numpy as np
 
 import config
+from config import ROLES
 from .da_groups import GROUP_ORDER
 
-ROLES = ("provider", "patient", "caregiver")
 
 MODELS = [
     {"key": "speaker_roles", "label": "Speaker roles", "short": "Roles", "file": "speaker_roles.joblib", "needs": ()},

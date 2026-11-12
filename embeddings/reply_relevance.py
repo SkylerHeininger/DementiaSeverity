@@ -11,6 +11,7 @@ python embeddings/reply_relevance.py "$DATA" --stats
 """
 import argparse
 import glob
+import importlib.util
 import os
 import re
 
@@ -32,11 +33,17 @@ MIN_POOL = 2
 RESPONDER_ROLES = ("patient", "caregiver")
 SUBSETS = ("all", "q")
 
-QUESTION_DAS = {
-    "Wh-Question", "Yes-No-Question", "Open-Question", "Or-Clause",
-    "Declarative-Yes-No-Question", "Rhetorical-Questions",
-    "Tag-Question", "Declarative-Wh-Question",
-}
+# Question dialogue acts: the "questions" group of the DA track's grouping, which the demo app's
+# Dialogue acts tab also uses. Read from that one file so the two can't drift apart.
+DA_GROUPS_FILE = os.path.join(HERE, "..", "interactive", "app", "pipeline", "da_groups.py")
+
+def load_question_das(path=DA_GROUPS_FILE):
+    spec = importlib.util.spec_from_file_location("da_groups", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return frozenset(module.EXTENDED_DA_GROUPS["questions"])
+
+QUESTION_DAS = load_question_das()
 
 def unit(v):
     return v / (np.linalg.norm(v, axis=-1, keepdims=True) + 1e-12)

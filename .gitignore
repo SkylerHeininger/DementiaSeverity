@@ -24,3 +24,7 @@ speaker_roles/
 
 .claude/
 __pycache__/
+
+# Exception: cached LLM topic labels for the three synthetic demo transcripts (no patient data),
+# so the interactive demo's Topics tab works without installing an LLM.
+!interactive/app/topic_cache/transcript-*.json

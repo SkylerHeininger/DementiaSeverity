@@ -36,14 +36,28 @@
   const TABS = ["stats", "da", "rep", "sev"];
   const selected = new Set();
 
+  function scrollToTurn(turn) {
+    const box = $("transcript");
+    box.scrollBy({ top: turn.getBoundingClientRect().top - box.getBoundingClientRect().top - box.clientHeight / 3, behavior: "smooth" });
+  }
+
   function highlight(match, scroll) {
     const turns = [...document.querySelectorAll(".turn")];
     turns.forEach((t) => t.classList.toggle("hl", match(t)));
     const first = turns.find((t) => t.classList.contains("hl"));
-    if (scroll && first) {
-      const box = $("transcript");
-      box.scrollBy({ top: first.getBoundingClientRect().top - box.getBoundingClientRect().top - box.clientHeight / 3, behavior: "smooth" });
-    }
+    if (scroll && first) scrollToTurn(first);
+  }
+
+  // Topics tab: one topic (thread) at a time is highlighted in the transcript.
+  let thread = null;
+  const highlightThread = (scroll) => highlight((t) => thread !== null && t.dataset.thread === thread, scroll);
+
+  function selectThread(id, turnIndex) {
+    thread = thread === id && turnIndex == null ? null : id;
+    document.querySelectorAll("#panel-rep [data-thread]").forEach((el) => el.classList.toggle("on", el.dataset.thread === thread));
+    highlightThread(turnIndex == null);
+    const target = turnIndex != null && $(`turn-${turnIndex}`);
+    if (target) scrollToTurn(target);
   }
 
   const highlightSelected = (scroll) => highlight((t) => selected.size > 0 && t.dataset.groups.split(" ").some((g) => selected.has(g)), scroll);
@@ -58,7 +72,9 @@
     });
     TABS.forEach((n) => { $(`panel-${n}`).hidden = n !== name; });
     history.replaceState(null, "", `#${name}`);
-    if (name === "da") highlightSelected(false); else highlight(() => false, false);
+    if (name === "da") highlightSelected(false);
+    else if (name === "rep") highlightThread(false);
+    else highlight(() => false, false);
   }
 
   document.querySelectorAll(".tab").forEach((tab) => {
@@ -77,8 +93,16 @@
     highlightSelected(true);
   }));
 
+  document.querySelectorAll(".tseg, .rep-name, .rep-visit, .seg-row").forEach((el) => el.addEventListener("click", () => {
+    selectThread(el.dataset.thread, el.dataset.turn ?? null);
+  }));
+
   document.querySelectorAll(".seg-btn").forEach((btn) => btn.addEventListener("click", () => {
-    document.querySelectorAll(".seg-btn").forEach((b) => b.classList.toggle("active", b === btn));
+    document.querySelectorAll(".tseg, .rep-name, .rep-visit, .seg-row").forEach((el) => el.addEventListener("click", () => {
+    selectThread(el.dataset.thread, el.dataset.turn ?? null);
+  }));
+
+  document.querySelectorAll(".seg-btn").forEach((b) => b.classList.toggle("active", b === btn));
     document.querySelectorAll(".sev-view").forEach((v) => { v.hidden = v.dataset.view !== btn.dataset.view; });
   }));
 

@@ -444,7 +444,9 @@ def visit_language_stats(t):
     non_en = labels.isin(["spanish", "other"])
     words = t["word_count"]
     share = words[non_en].sum() / max(words[judged].sum(), 1)
-    return float(share), float(judged.mean()) if len(t) else (0.0, 0.0)
+    if not len(t):
+        return 0.0, 0.0
+    return float(share), float(judged.mean())
 
 # Annotate visits with caregiver presence and non-English language statistics.
 def annotate_visits(idx, roles=None, require_caregiver=True, language_threshold=0.10, verbose=True):
