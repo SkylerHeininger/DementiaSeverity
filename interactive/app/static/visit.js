@@ -98,11 +98,7 @@
   }));
 
   document.querySelectorAll(".seg-btn").forEach((btn) => btn.addEventListener("click", () => {
-    document.querySelectorAll(".tseg, .rep-name, .rep-visit, .seg-row").forEach((el) => el.addEventListener("click", () => {
-    selectThread(el.dataset.thread, el.dataset.turn ?? null);
-  }));
-
-  document.querySelectorAll(".seg-btn").forEach((b) => b.classList.toggle("active", b === btn));
+    document.querySelectorAll(".seg-btn").forEach((b) => b.classList.toggle("active", b === btn));
     document.querySelectorAll(".sev-view").forEach((v) => { v.hidden = v.dataset.view !== btn.dataset.view; });
   }));
 

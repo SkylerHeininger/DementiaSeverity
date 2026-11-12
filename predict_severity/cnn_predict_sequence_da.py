@@ -363,6 +363,21 @@ def predict_net(net, sessions, test, mean, std, hide_groups):
     return np.concatenate(outputs) * std + mean
 
 
+def save_net(path, net, mean, std, class_weights):
+    # Everything the app needs to rebuild the network and turn its output back into DSRS points
+    path.parent.mkdir(parents=True, exist_ok=True)
+    torch.save({
+        "state_dict": net.state_dict(),
+        "mean": float(mean),
+        "std": float(std),
+        "config": {"speaker_dim": SPEAKER_DIM, "group_dim": GROUP_DIM, "n_filters": FILTERS, "kernel": KERNEL, "layers": LAYERS, "dropout": DROPOUT},
+        "roles": list(ROLES),
+        "da_groups": list(DA_GROUPS),
+        "da_to_group": dict(_DA_TO_GROUP),
+        "class_weights": bool(class_weights),
+    }, path)
+
+
 def cross_validate_neural(name, sessions, y, groups, hide_groups, train_ok=None, class_weights=False):
     # Runs the cross validation. Note that we made some pieces for repeating, with different seeds, to help
     # validate results. 
@@ -599,6 +614,7 @@ def main(argv=None):
     ap.add_argument("--blacklist", default=None, help="file of record ids to exclude, one per line")
     ap.add_argument("--train-without-hard", action="store_true", help="train on the sessions that are not dyadic or bilingual, and score the dyadic and bilingual sessions as a separate held-out set")
     ap.add_argument("--class-weights", action="store_true", help="weight each training visit's loss by the inverse frequency of its severity band (0-18, 19-36, 37-54) in the training folds, for the CNN arms only")
+    ap.add_argument("--save-model", default=None, help="path to save a CNN trained on every usable session, for the app (e.g. models/cnn_da.pth)")
     ap.add_argument("--output-dir", default=".", help="folder for outputs")
     args = ap.parse_args(argv)
     sys.stdout.reconfigure(line_buffering=True)
@@ -703,6 +719,13 @@ def main(argv=None):
 
     print(f"Wrote {predictions_path}")
 
+    # The fold networks each only see part of the data, so train one CNN on every usable session for the app
+    if args.save_model:
+        final_train = np.where(train_ok)[0] if train_ok is not None else np.arange(len(y))
+        began = time.time()
+        net, mean, std = train_net(sessions, y, final_train, SET_SEED, False, args.class_weights)
+        save_net(Path(args.save_model), net, mean, std, args.class_weights)
+        print(f"Saved the CNN, trained on {len(final_train)} sessions ({time.time() - began:.0f}s), to {args.save_model}")
 
 if __name__ == "__main__":
     main()

@@ -9,6 +9,7 @@ from .da_groups import GROUP_ORDER
 MODELS = [
     {"key": "speaker_roles", "label": "Speaker roles", "short": "Roles", "file": "speaker_roles.joblib", "needs": ()},
     {"key": "speaker_da", "label": "Dialogue acts", "short": "Dialogue acts", "file": "speaker_da.joblib", "needs": ("dialogue_acts",)},
+    {"key": "cnn_da", "label": "Dialogue act sequence (CNN)", "short": "CNN", "file": "cnn_da.pth", "needs": ("dialogue_acts",), "kind": "cnn"},
 ]
 
 BAND_LABELS = {"normal_to_mild": "Normal to mild", "moderate": "Moderate", "severe": "Severe"}
@@ -120,6 +121,12 @@ def run_model(spec, available, results):
         return {**out, "status": "blocked", "message": "Needs the dialogue act step to finish first."}
     
     try:
+        if spec.get("kind") == "cnn":
+            from . import cnn   # imported here so the app still starts, and the other models still run, without torch
+            score = min(max(cnn.predict(path, results["dialogue_acts"]), 0.0), float(config.DSRS_MAX))
+            out.update(status="ok", predicted=round(score, 1), band=band(score), explanation=None)
+            return out
+
         artifact = load_artifact(path)
         names = artifact["features"]
         absent = [n for n in names if n not in available]
