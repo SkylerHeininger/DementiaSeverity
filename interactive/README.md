@@ -6,6 +6,14 @@ This component is based off our existing versions of HealthPAL, with some variat
 
 See the video demo here: NEED DEMO VIDEO STILL
 
+## Running the app
+
+We use a Flask app. It's UI is made to look similar to that of HealthPAL, but considering there is no existing clinician-facing side of this right now, this is open for some interpretation by us.
+
+Run the app using `flask --app app run`, from within the app dir. Be careful with your venv, you may want to create a conda environment for this (using requirements.txt from the above dir).
+
+Note, I did have some issues with my venv not recognizing the correct flask to run, so I had to run `../../.venv/bin/flask --app app run`, from within the app folder
+
 ## Description of Design
 
 We currently open on the home page, where the user can then login. Since this is not the actual HealthPAL app, the login page is just mocked up, and requires no credentials for now. After login, the "clinician" can upload a transcript, after which it is processed after upload. This breaks down each part individually, first showing some visuals for speaking time, and a breakdown of who is speaking through the visit. The next tab shows the dialogue acts broken down by speaker, and upon selecting a certain DA, will highlight turns with those DAs on the left.
@@ -26,16 +34,6 @@ The overall workflow includes the following below.
     - Dialogue Act Statistics. An interactive component to view who is asking questions, etc, during a visit.
     - Embedding/Repetition Measures. An interactive component for viewing where repetition is happening during a visit, and by who.
 - Dementia Severity Prediction. Along with the base DSRS score, this page would include some interpretations of the severity scaling that typically occurs after the DSRS is predicted. 
-
-## App
-
-We use a Flask app. It's UI is made to look similar to that of HealthPAL, but considering there is no existing clinician-facing side of this right now, this is open for some interpretation by us.
-
-So, this includes an area to select patients. The generate_transcripts will generate 3 different patients, of varying severity. These show in the UI, where after "logging in," each patient can be selected. Within this, a transcript of the visit, and the other pieces from above are shown (typically we prefer to show an audio recording to patients/caregivers, but since this demo is using generated transcripts, transcripts it will be).
-
-Run the app using `flask --app app run`, from within the app dir. Be careful with your venv, you may want to create a conda environment for this (using requirements.txt from the above dir).
-
-Note, I did have some issues with my venv not recognizing the correct flask to run, so I had to run `../../.venv/bin/flask --app app run`, from within the app folder
 
 ## AI usage in Flask app
 
